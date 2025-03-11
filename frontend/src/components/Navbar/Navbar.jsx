@@ -19,6 +19,9 @@ const Navbar = () => {
         <Button color="inherit" onClick={() => navigate("/contact")}>
           Contact
         </Button>
+        <Button color="inherit" onClick={() => navigate("/login")}>
+          Login
+        </Button>
       </Toolbar>
     </AppBar>
   );

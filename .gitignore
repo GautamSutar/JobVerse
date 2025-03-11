@@ -22,3 +22,11 @@ npm-debug.log*
 
 # AI Models (if large)
 ai_model/models/
+
+
+# Ignore the virtual environment
+venv/
+*.pyc
+__pycache__/
+db.sqlite3
+.env

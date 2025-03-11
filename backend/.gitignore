@@ -1,0 +1,26 @@
+# Virtual environment
+venv/
+venv312/
+env/
+.venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff
+*.log
+db.sqlite3
+*.pid
+
+# Static and media files (if not version-controlled)
+staticfiles/
+media/
+
+# macOS
+.DS_Store
+
+# IDE files
+.idea/
+*.swp
