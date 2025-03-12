@@ -10,6 +10,15 @@ python manage.py migrate
 python manage.py runserver
 
 
+
+             frontend setup
+*************************************
+1) cd frontend 
+2) npm run dev
+
+
+
+
            CORS SETUP
 *************************************
 
