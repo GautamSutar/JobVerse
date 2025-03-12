@@ -6,6 +6,9 @@ import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
 import Login from "../pages/Login/Login";
 import Signup from "../pages/Signup/signup";
+import Features from "../pages/Features/Features";
+import Practice from "../pages/Practice/Practice";
+import Landing from "../pages/Landing/Landing";
 
 
 
@@ -15,7 +18,7 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
+        path: "/home",
         element: <Home />,
       },
       {
@@ -33,6 +36,18 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
+      },
+      {
+        path: "/features",
+        element: <Features />,
+      },
+      {
+        path: "/practice",
+        element: <Practice />,
+      },
+      {
+        path: "/",
+        element: <Landing />,
       },
     ],
   },

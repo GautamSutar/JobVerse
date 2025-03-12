@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { auth, googleProvider, signInWithPopup } from "../../Firebase/firebase";
+import { auth, googleProvider } from "../../Firebase/firebase";
+import { signInWithPopup } from "firebase/auth";
+
 
 const Signup = () => {
   const [formData, setFormData] = useState({

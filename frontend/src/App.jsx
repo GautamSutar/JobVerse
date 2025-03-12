@@ -7,7 +7,9 @@ function App() {
   const location = useLocation();
 
   // Hide navbar for specific routes
-  const hideNavbar = ["/signup", "/login"].includes(location.pathname);
+  const hideNavbar = ["/signup", "/login"].includes(
+    location.pathname
+  );
 
   return (
     <div className="flex flex-col min-h-screen">
