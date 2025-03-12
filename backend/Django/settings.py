@@ -142,14 +142,14 @@ MIDDLEWARE = [
 
 # 🔹 CORS Settings (Allow frontend React app)
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5177",  # Your React frontend (Vite)
+    "http://localhost:5173",  # Your React frontend (Vite)
     "http://127.0.0.1:8000",
 ]
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies if needed
 
 # 🔹 CSRF Trusted Origins (Important for API authentication)
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5176"
+    "http://localhost:5173"
 ]
 
 # 🔹 Security Headers
