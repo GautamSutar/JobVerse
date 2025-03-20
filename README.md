@@ -2,51 +2,51 @@
 
 ### 🔄 Git Merge for Incoming Changes - Merging Branch 1 into Branch 2
 
-1️⃣ git status - Check branch content  
-2️⃣ git branch - Check on which branch you are right now (consider branch 1)  
-3️⃣ git fetch - Pull the latest changes on your current branch  
-4️⃣ git checkout (branch name - consider branch 2) - Switch to the branch where you want to merge the code  
-5️⃣ git branch - Check branch, now you are in (consider branch 2)  
-6️⃣ git pull origin branch 2 - Pull the latest changes from the remote branch  
-7️⃣ git merge (branch name - consider branch 1)  
+1) git status - Check branch content  
+2) git branch - Check on which branch you are right now (consider branch 1)  
+3) git fetch - Pull the latest changes on your current branch  
+4) git checkout (branch name - consider branch 2) - Switch to the branch where you want to merge the code  
+5) git branch - Check branch, now you are in (consider branch 2)  
+6) git pull origin branch 2 - Pull the latest changes from the remote branch  
+7) git merge (branch name - consider branch 1)  
 
 ⚠️ Handling Merge Conflicts Efficiently:
 
 To accept all incoming changes and resolve the commit at once:
 
-8️⃣ git checkout --theirs .  
-9️⃣ git add .  
-🔟 git commit -m "Merged Gautam branch into replica, accepting all incoming changes"  
-1️⃣1️⃣ git push origin (branch name - consider branch 2)  
+8) git checkout --theirs .  
+9) git add .  
+10) git commit -m "Merged Gautam branch into replica, accepting all incoming changes"  
+11) git push origin (branch name - consider branch 2)  
 
 ---
 
 ## 🚀 Django Start
 
-1️⃣ cd backend
-2️⃣ python -m venv venv313 (Create virtual environment for specific Python version)
-3️⃣ source venv313/Scripts/activate (Activate the virtual environment every time)
-4️⃣ pip install django
-5️⃣ django-admin --version
-6️⃣ pip install firebase-admin
-7️⃣ pip show firebase-admin
-8️⃣ pip install djangorestframework
-9️⃣ pip install django-cors-headers
-🔟  pip install google-generativeai
-1️⃣1️⃣ pip install python-dotenv
-1️⃣2️⃣ pip install pdfplumber
-1️⃣3️⃣ pip install python-docx
-1️⃣4️⃣ python manage.py makemigrations
-1️⃣5️⃣ python manage.py migrate
-1️⃣6️⃣ python manage.py runserver
+1) cd backend
+2) python -m venv venv313 (Create virtual environment for specific Python version)
+3) source venv313/Scripts/activate (Activate the virtual environment every time)
+4) pip install django
+5) django-admin --version
+6) pip install firebase-admin
+7) pip show firebase-admin
+8) pip install djangorestframework
+9) pip install django-cors-headers
+10) pip install google-generativeai
+11) pip install python-dotenv
+12) pip install pdfplumber
+13) pip install python-docx
+14) python manage.py makemigrations
+15) python manage.py migrate
+16) python manage.py runserver
 
 ---
 
 ## ⚙️ Django Other Commands
 
-1️⃣ python ../../manage.py startapp interviews_ai - Create a Django app inside `backend/app/interviews_ai/` with necessary files (`models.py`, `views.py`, `urls.py`, etc.)  
-2️⃣ python manage.py makemigrations - Run this when new changes are made  
-3️⃣ python manage.py migrate - Apply database migrations  
+1) python ../../manage.py startapp interviews_ai - Create a Django app inside `backend/app/interviews_ai/` with necessary files (`models.py`, `views.py`, `urls.py`, etc.)  
+2) python manage.py makemigrations - Run this when new changes are made  
+3) python manage.py migrate - Apply database migrations  
 
 ---
 
