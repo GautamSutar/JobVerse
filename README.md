@@ -1,25 +1,117 @@
-                                         Git hub
-                        *****************************************
+## 🌟 GitHub
 
-Git merge for incoming changes - merge code branch 1 into branch 2 
+### 🔄 Git Merge for Incoming Changes - Merging Branch 1 into Branch 2
 
-1) git status - check branch content 
-2) git branch - check on which branch you are righ now ( consider branch 1 ) 
-4) git fetch - pull the latest changes on your current branch  
-4) git chekout ( branch name - ( consider branch 2 )  ) - switched to branch in which you want to merge the code 
-5) git branch - check branch, now you are in ( consider branch 2 )
-6) git pull origin branch 2 - Pull the Latest Changes from the Remote Branch
-7) git merge ( branch name - ( consider branch 1 ) ) 
+1️⃣ git status - Check branch content  
+2️⃣ git branch - Check on which branch you are right now (consider branch 1)  
+3️⃣ git fetch - Pull the latest changes on your current branch  
+4️⃣ git checkout (branch name - consider branch 2) - Switch to the branch where you want to merge the code  
+5️⃣ git branch - Check branch, now you are in (consider branch 2)  
+6️⃣ git pull origin branch 2 - Pull the latest changes from the remote branch  
+7️⃣ git merge (branch name - consider branch 1)  
 
+⚠️ Handling Merge Conflicts Efficiently:
 
-you can resolve conflict manually but it is too time consuming, so  allow only incoming changes and resolve commit at once use following commands
+To accept all incoming changes and resolve the commit at once:
 
-8) git checkout --theirs .
-9) git add .
-10) git commit -m "Merged Gautam branch into replica, accepting all incoming changes"
-11) git push origin ( branch name - ( consider branch 2 ))
- 
+8️⃣ git checkout --theirs .  
+9️⃣ git add .  
+🔟 git commit -m "Merged Gautam branch into replica, accepting all incoming changes"  
+1️⃣1️⃣ git push origin (branch name - consider branch 2)  
 
- 
+---
 
+## 🚀 Django Start
+
+1️⃣ cd backend  
+2️⃣ python -m venv venv313 (Create virtual environment for specific Python version)  
+3️⃣ source venv313/Scripts/activate (Activate the virtual environment every time)  
+4️⃣ pip install django  
+5️⃣ django-admin --version  
+6️⃣ pip install firebase-admin  
+7️⃣ pip show firebase-admin  
+8️⃣ pip install djangorestframework  
+9️⃣ pip install django-cors-headers  
+🔟 pip install google-generativeai  
+ pip install python-dotenv 
+ pip install pdfplumber
+ pip install python-docx
+ python manage.py makemigrations
+ python manage.py migrate  
+ python manage.py runserver  
+
+---
+
+## ⚙️ Django Other Commands
+
+1️⃣ python ../../manage.py startapp interviews_ai - Create a Django app inside `backend/app/interviews_ai/` with necessary files (`models.py`, `views.py`, `urls.py`, etc.)  
+2️⃣ python manage.py makemigrations - Run this when new changes are made  
+3️⃣ python manage.py migrate - Apply database migrations  
+
+---
+
+## 🌐 CORS Setup
+
+🔹 Fixing CORS Errors:  
+- Check the frontend URL port where it is running  
+- Check if the correct CORS URL is present in `Django/settings.py`, and update the frontend port if you face any CORS policy error in your browser console  
+
+---
+
+## 🔥 Firebase Setup
+
+### Firebase Dependencies:
+1️⃣ pip install firebase-admin  
+2️⃣ pip install django-firebase-auth  
+
+---
+
+## ❌ Port Error Handling
+
+📌 ChatGPT Link - [ChatGPT Shared Link](https://chatgpt.com/share/67d17d54-6918-8009-9836-9bd98bec7ceb)  
+
+### 🛠️ Fixing Frontend Port Errors
+
+#### Error Message:
+```bash
+$ npm run dev
+> frontend@0.0.0 dev
+> vite
+error when starting dev server:
+    Error: Port 5173 is already in use
+    at Server.onError (file:///D:/VS%20CODE/web%20development/Minor%20Project%20Notes/Ai/AI%20Interview/frontend/node_modules/vite/dist/node/chunks/dep-ByPKlqZ5.js:30662:18)
+    at Server.emit (node:events:518:28)
+    at emitErrorNT (node:net:1944:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+```
+
+#### Steps to Resolve:
+1️⃣ Find which process is using port 5173:
+```bash
+netstat -ano | findstr :5173
+```
+📌 Run this command in PowerShell or Command Prompt (not Git Bash)
+
+#### Example Output:
+```bash
+PS D:\VS CODE\web development\Minor Project Notes\Ai\AI Interview> netstat -ano | findstr :5173
+  TCP    [::1]:5173             [::]:0                 LISTENING       24896
+```
+
+2️⃣ Kill the process using the PID:
+```bash
+taskkill /PID <PID> /F
+```
+
+#### Example Output:
+```bash
+PS D:\VS CODE\web development\Minor Project Notes\Ai\AI Interview> taskkill /PID 24896 /F
+SUCCESS: The process with PID 24896 has been terminated.
+```
+
+✅ Port 5173 is now free, restart your frontend server!  
+
+---
+
+📝 Note: This `README.md` maintains the same content but is now well-structured with proper formatting and emojis for clarity! 🚀
 
