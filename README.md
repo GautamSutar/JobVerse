@@ -23,22 +23,22 @@ To accept all incoming changes and resolve the commit at once:
 
 ## 🚀 Django Start
 
-1️⃣ cd backend  
-2️⃣ python -m venv venv313 (Create virtual environment for specific Python version)  
-3️⃣ source venv313/Scripts/activate (Activate the virtual environment every time)  
-4️⃣ pip install django  
-5️⃣ django-admin --version  
-6️⃣ pip install firebase-admin  
-7️⃣ pip show firebase-admin  
-8️⃣ pip install djangorestframework  
-9️⃣ pip install django-cors-headers  
-🔟 pip install google-generativeai  
- pip install python-dotenv 
- pip install pdfplumber
- pip install python-docx
- python manage.py makemigrations
- python manage.py migrate  
- python manage.py runserver  
+1️⃣ cd backend
+2️⃣ python -m venv venv313 (Create virtual environment for specific Python version)
+3️⃣ source venv313/Scripts/activate (Activate the virtual environment every time)
+4️⃣ pip install django
+5️⃣ django-admin --version
+6️⃣ pip install firebase-admin
+7️⃣ pip show firebase-admin
+8️⃣ pip install djangorestframework
+9️⃣ pip install django-cors-headers
+🔟  pip install google-generativeai
+1️⃣1️⃣ pip install python-dotenv
+1️⃣2️⃣ pip install pdfplumber
+1️⃣3️⃣ pip install python-docx
+1️⃣4️⃣ python manage.py makemigrations
+1️⃣5️⃣ python manage.py migrate
+1️⃣6️⃣ python manage.py runserver
 
 ---
 
