@@ -14,9 +14,9 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-3">
-          <img 
-            src="/assets/images/Logo/logo.jpg" 
-            alt="Logo" 
+          <img
+            src="/assets/images/Logo/logo.jpg"
+            alt="Logo"
             className="h-12 w-12 object-contain cursor-pointer 
             hover:brightness-125 transition duration-500"
           />
@@ -28,7 +28,14 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6">
-          {["Home", "About", "Features", "Practice", "Contact", "Login"].map((item, index) => (
+          {[
+            "Home",
+            "About",
+            "Features",
+            "Practice",
+            "Contact",
+            "Login",
+          ].map((item, index) => (
             <li key={index}>
               <Link
                 to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
@@ -50,7 +57,15 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-gray-900 shadow-lg">
           <ul className="flex flex-col items-center space-y-4 py-5">
-            {["Home", "About", "Features", "Practice", "Feedback", "Contact", "Login"].map((item, index) => (
+            {[
+              "Home",
+              "About",
+              "Features",
+              "Practice",
+              "Feedback",
+              "Contact",
+              "Login",
+            ].map((item, index) => (
               <li key={index}>
                 <Link
                   to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}

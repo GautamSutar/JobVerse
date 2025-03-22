@@ -85,6 +85,17 @@ TEMPLATES = [
     },
 ]
 
+# Use a Rate Limiter to Control API Calls
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '5/min'  # Allow max 5 requests per user per minute
+    }
+}
+
+
 # 🔹 WSGI Application
 WSGI_APPLICATION = 'Django.wsgi.application'
 
@@ -118,3 +129,7 @@ STATIC_URL = '/static/'
 
 # 🔹 Default Primary Key Field Type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+

@@ -36,9 +36,11 @@ To accept all incoming changes and resolve the commit at once:
 11) pip install python-dotenv
 12) pip install pdfplumber
 13) pip install python-docx
-14) python manage.py makemigrations
-15) python manage.py migrate
-16) python manage.py runserver
+14) pip install django-environ
+
+1) python manage.py makemigrations
+1) python manage.py migrate
+1) python manage.py runserver
 
 ---
 

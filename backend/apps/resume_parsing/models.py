@@ -7,6 +7,7 @@ class Resume(models.Model):
     skills = models.TextField(null=True, blank=True)
     education = models.TextField(null=True, blank=True)
     experience = models.TextField(null=True, blank=True)
+    text = models.TextField(blank=True, null=True)  # Ensure this field exists
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

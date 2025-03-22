@@ -3,6 +3,7 @@ import { auth, googleProvider } from "./../../Firebase/firebase"; // Adjust path
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Replace useHistory with useNavigate
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -23,10 +24,26 @@ const Login = () => {
         id_token: idToken,
       });
 
-      navigate("/");
+      // Show success alert
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Login successful! Redirecting...",
+        timer: 2000,
+        showConfirmButton: false,
+      }).then(() => {
+        navigate("/");
+      });
     } catch (error) {
       console.log("Login error ", error);
       console.error("Login failed:", error.message);
+      // Show error alert
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message || "Login failed. Please try again.",
+        confirmButtonColor: "#002D74",
+      });
     }
   };
 
@@ -39,9 +56,25 @@ const Login = () => {
         id_token: idToken,
       });
 
-      navigate("/");
+      // Show success alert
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Google Login successful! Redirecting...",
+        timer: 2000,
+        showConfirmButton: false,
+      }).then(() => {
+        navigate("/");
+      });
     } catch (error) {
       console.error("Google Login failed:", error.message);
+      // Show error alert
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message || "Google Login failed. Please try again.",
+        confirmButtonColor: "#002D74",
+      });
     }
   };
 
