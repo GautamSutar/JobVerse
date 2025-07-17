@@ -37,10 +37,23 @@ To accept all incoming changes and resolve the commit at once:
 12) pip install pdfplumber
 13) pip install python-docx
 14) pip install django-environ
-
+15) pip install google-cloud-speech google-cloud-texttospeech google-cloud-dialogflow google-cloud-language django-cors-headers
+16) pip install dj-database-url python-decouple psycopg2-binary
 1) python manage.py makemigrations
 1) python manage.py migrate
 1) python manage.py runserver
+
+
+pip install djangorestframework
+pip install djangorestframework-simplejwt
+
+
+
+
+
+
+
+
 
 ---
 
@@ -117,3 +130,12 @@ SUCCESS: The process with PID 24896 has been terminated.
 
 📝 Note: This `README.md` maintains the same content but is now well-structured with proper formatting and emojis for clarity! 🚀
 
+
+
+
+
+Python  Version Check Or specific Version Venv creation
+
+1) py -3.10 --versio   (  for checking specific version  )
+2) py -0            (  List All Installed Python Versions  )
+3) python3.10 -m venv rasa_env

@@ -1,6 +1,7 @@
 # Virtual environment
 venv/
 venv312/
+rasa_venv/
 env/
 .venv/
 

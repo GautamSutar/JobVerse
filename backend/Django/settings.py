@@ -1,28 +1,30 @@
 import os
 from pathlib import Path
-import firebase_admin
-from firebase_admin import credentials
+# import firebase_admin
+# from firebase_admin import credentials
+from decouple import config
+from dotenv import load_dotenv
+from datetime import timedelta
 
+
+load_dotenv()  # Load environment variables from .env file
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 🔹 Load Firebase credentials
-cred_path = BASE_DIR / "firebase-adminsdk.json"
-if not cred_path.exists():
-    raise FileNotFoundError(f"Firebase credentials file not found: {cred_path}")
-cred = credentials.Certificate(str(cred_path))
-firebase_admin.initialize_app(cred)
+#  Load Firebase credentials
+# cred_path = BASE_DIR / "firebase-adminsdk.json"
+# if not cred_path.exists():
+#     raise FileNotFoundError(f"Firebase credentials file not found: {cred_path}")
+# cred = credentials.Certificate(str(cred_path))
+# firebase_admin.initialize_app(cred)
 
-# 🔹 Secret Key (Load from environment variable)
-SECRET_KEY = os.getenv("SECRET_KEY", "(r-rj927u#0(d+00db-!_r290fg0409t0ndgn^=%-z-!ooftnu")
+SECRET_KEY = config('SECRET_KEY') #  Secret Key (Load from environment variable)
+DEBUG = config('DEBUG', default=False, cast=bool) # Debug Configuration 
 
-# 🔹 Debug mode (Set False in production)
-DEBUG = os.getenv("DEBUG", "True") == "True"
-
-# 🔹 Allowed Hosts
+#  Allowed Hosts
 ALLOWED_HOSTS = ['*']
 
-# 🔹 Installed Apps
+#  Installed Apps
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,15 +32,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'apps.users',  # Custom User Model
+    # 'apps.users',
     'corsheaders',
     'apps.interviews_ai',
-    'apps.resume_parsing'
-
+    'apps.resume_parsing',
+    'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',  
+    'rest_framework_simplejwt',
+    'apps.users.apps.UsersConfig',
+    'apps.students.apps.StudentsConfig',
+    'apps.hr.apps.HrConfig',
 ]
 
-# 🔹 Middleware
+#  Middleware
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Add at the top
     'django.middleware.security.SecurityMiddleware',
@@ -50,25 +56,25 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# 🔹 CORS Settings (Allow frontend React app)
+#  CORS Settings (Allow frontend React app)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Your React frontend (Vite)
     "http://127.0.0.1:8000",
 ]
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies if needed
 
-# 🔹 CSRF Trusted Origins (Important for API authentication)
+#  CSRF Trusted Origins (Important for API authentication)
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173"
 ]
 
-# 🔹 Security Headers
-SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"  # 👈 Added here
+#  Security Headers
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"  
 
-# 🔹 Root URL Configuration
+#  Root URL Configuration
 ROOT_URLCONF = 'Django.urls'
 
-# 🔹 Templates
+#  Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -92,25 +98,46 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'user': '5/min'  # Allow max 5 requests per user per minute
-    }
+    },
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+      'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=120),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ROTATE_REFRESH_TOKENS': True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
-# 🔹 WSGI Application
+#  WSGI Application
 WSGI_APPLICATION = 'Django.wsgi.application'
 
-# 🔹 Database Configuration (Using SQLite)
+DATABASE_URL = config("DATABASE_URL", default=None) # Try to load NEON/PostgreSQL URL
+
+#  Database Configuration Using Neon and Fall Back to SQLite if not set
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE'),
+        'USER': os.getenv('USER'),
+        'PASSWORD': os.getenv('PASSWORD'),
+        'HOST': os.getenv('HOST'),
+        'PORT': '5432', # Default PostgreSQL port
     }
 }
 
-# 🔹 Authentication & Custom User Model
+
+#  Authentication & Custom User Model
 AUTH_USER_MODEL = 'users.CustomUser'
 
-# 🔹 Password Validators
+#  Password Validators
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -118,16 +145,16 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# 🔹 Language & Timezone
+#  Language & Timezone
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# 🔹 Static Files
+#  Static Files
 STATIC_URL = '/static/'
 
-# 🔹 Default Primary Key Field Type
+#  Default Primary Key Field Type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 

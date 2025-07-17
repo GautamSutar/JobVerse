@@ -10,41 +10,37 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-900 text-white p-5 shadow-xl fixed w-full top-0 z-50">
+    <nav className=" bg-white text-black p-4 shadow-xl fixed w-full top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <img
-            src="/assets/images/Logo/logo.jpg"
-            alt="Logo"
-            className="h-12 w-12 object-contain cursor-pointer 
-            hover:brightness-125 transition duration-500"
-          />
+        <div className="flex items-center space-x-9">
+          <video className="w-20 h-20 rounded-xl" autoPlay muted loop>
+            <source src="/assets/images/Logo/logo2.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
 
-          <h1 className="text-3xl font-extrabold tracking-wide cursor-pointer text-pink-500 opacity-80 transition duration-500 hover:opacity-100">
-            SkillCheck
+          <h1 className="text-3xl font-extrabold tracking-wide cursor-pointer text-black opacity-80 transition duration-500 hover:opacity-100">
+            <span className="text-blue-800">
+              <span className="text-4xl text-blue-800">S</span>kill
+            </span>
+            <span className="text-4xl">C</span>heck
           </h1>
         </div>
 
         {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6">
-          {[
-            "Home",
-            "About",
-            "Features",
-            "Practice",
-            "Contact",
-            "Login",
-          ].map((item, index) => (
-            <li key={index}>
-              <Link
-                to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                className="text-lg font-semibold text-pink-500 opacity-80 underline transition duration-300 hover:opacity-100"
-              >
-                {item}
-              </Link>
-            </li>
-          ))}
+          {["Home", "About", "Features", "Practice", "Contact", "Login"].map(
+            (item, index) => (
+              <li key={index}>
+                <Link
+                  to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                  className="text-lg font-semibold text-black opacity-80 underline transition duration-300 hover:opacity-100"
+                >
+                  {item}
+                </Link>
+              </li>
+            )
+          )}
         </ul>
 
         {/* Mobile Menu Button */}

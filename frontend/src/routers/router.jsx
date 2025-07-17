@@ -10,8 +10,14 @@ import Features from "../pages/Features/Features";
 import Landing from "../pages/Landing/Landing";
 import SkillCheckHomepage from "../pages/SkillCheckHomepage/SkillCheckHomepage";
 import PracticePage from "../pages/Interview_Practice/PracticePage";
-
-
+import Singup2 from "../pages/Signup2/Singup2";
+import Login2 from "../pages/Login2/Login2";
+import ProfileCompletion from "../pages/HR/ProfileCompletion";
+import HRDashboard from "../pages/HR/HRDashboard";
+import CreateJob from "../pages/HR/CreateJob";
+import StudentDashboard from "../pages/Student/StudentDashboard";
+import NotFound from "../pages/Student/NotFound";
+import ProtectedRoute from "../components/Protected/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -28,11 +34,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <Login />,
+        element: <Login2 />,
       },
       {
         path: "/signup",
-        element: <Signup />,
+        element: <Singup2 />,
       },
       {
         path: "/features",
@@ -49,6 +55,34 @@ const router = createBrowserRouter([
       {
         path: "/home",
         element: <SkillCheckHomepage />,
+      },
+      {
+        path: "/profile-completion",
+        element: <ProfileCompletion />,
+      },
+      {
+        path: "/hr-dashboard",
+        element: (
+          <ProtectedRoute allowedRoles="hr">
+            <HRDashboard />
+          </ProtectedRoute>
+        ),
+      },  
+      {
+        path: "/create-job",
+        element: <CreateJob />,
+      },
+      {
+        path: "/student-dashboard",
+        element: (
+          <ProtectedRoute allowedRoles="student">
+            <StudentDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "*",
+        element: <NotFound />,
       },
     ],
   },

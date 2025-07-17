@@ -274,7 +274,7 @@ const cardClasses = darkMode
       className={`flex flex-col mt-20 items-center justify-center min-h-screen ${themeClasses} p-4 md:p-6 transition-colors duration-500`}
     >
       <div
-        className={`${cardClasses} rounded-xl p-6 md:p-8 max-w-7xl w-full text-center transition-all hover:shadow-blue-400/20 relative`}
+        className={`${cardClasses} rounded-xl p-6 md:p-8 max-w-7xl w-full text-center transition-all hover:shadow-white relative`}
       >
         <Header
           showSettings={showSettings}

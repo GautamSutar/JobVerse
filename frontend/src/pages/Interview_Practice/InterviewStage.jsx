@@ -1,4 +1,3 @@
-// src/components/PracticePage/InterviewStage.jsx
 import React from "react";
 import Webcam from "react-webcam";
 
@@ -15,8 +14,9 @@ const InterviewStage = ({
     width: 1280, // Higher resolution for better quality
     height: 720,
     facingMode: "user", // Use front-facing camera
-    // Optionally, you can add zoom if supported by the device (not all browsers support this)
     zoom: 1.5, // Experimental: Zoom level (may not work in all browsers)
+    aspectRatio: 16 / 9, // Maintain aspect ratio
+    frameRate: 30, // Set frame rate for smoother video
   };
 
   return (
