@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/generate_question_api/', GenerateQuestionAPIView.as_view(), name='generate_question'),
     path('api/resume/', include('apps.resume_parsing.urls')),
     path('api/student/', include('apps.students.urls')),
+    path('api/hr/', include('apps.hr.urls')),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 ]
