@@ -27,7 +27,7 @@ class CustomUser(AbstractUser):
 
 
 
-
+    
 
 
 

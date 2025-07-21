@@ -1,64 +1,60 @@
 from rest_framework import generics, permissions, status
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from apps.hr.models import HRProfile
-from apps.hr.serializers import HrProfileSerializer
+from rest_framework.views import APIView
+from rest_framework.exceptions import ValidationError
+from .models import HRProfile
+from .serializers import HRProfileSerializer
 
-class HRProfileCreateUpdateView(generics.GenericAPIView):
-    serializer_class = HrProfileSerializer
+
+class HRProfileCreateUpdateView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        if HRProfile.objects.filter(user=request.user).exists():
-            raise ValidationError("Student profile already exists. You can edit it instead.")
-
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        mobile_number = serializer.validated_data.get('mobile_number')
-        if mobile_number and HRProfile.objects.filter(mobile_number=mobile_number).exists():
-            raise ValidationError({"mobile_number": "This mobile number already exists."})
-
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         try:
-            profile = request.user.hr_profile
+            profile = HRProfile.objects.get(user=request.user)
+            serializer = HRProfileSerializer(profile)
+            return Response(serializer.data)
         except HRProfile.DoesNotExist:
-            return Response({"detail": "Student profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(profile)
-        return Response(serializer.data)
+    def post(self, request):
+        serializer = HRProfileSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()  # create method will use request.user
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, *args, **kwargs):
+    def put(self, request):
         try:
-            profile = request.user.hr_profile
+            profile = HRProfile.objects.get(user=request.user)
         except HRProfile.DoesNotExist:
-            return Response({"detail": "Student profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(profile, data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer = HRProfileSerializer(profile, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        mobile_number = serializer.validated_data.get('mobile_number')
-        if mobile_number and HRProfile.objects.filter(mobile_number=mobile_number).exclude(id=profile.id).exists():
-            raise ValidationError({"mobile_number": "This mobile number is already in use."})
-
-        serializer.save()
-        return Response(serializer.data)
-
-    def patch(self, request, *args, **kwargs):
+    def patch(self, request):
         try:
-            profile = request.user.hr_profile
+            profile = HRProfile.objects.get(user=request.user)
         except HRProfile.DoesNotExist:
-            return Response({"detail": "Student profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(profile, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
+        serializer = HRProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        mobile_number = serializer.validated_data.get('mobile_number')
-        if mobile_number and HRProfile.objects.filter(mobile_number=mobile_number).exclude(id=profile.id).exists():
-            raise ValidationError({"mobile_number": "This mobile number is already in use."})
 
-        serializer.save()
-        return Response(serializer.data)
+
+class DeleteHRAccountView(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request):
+        if getattr(request.user, 'role', None) != "hr":
+            raise ValidationError({"detail": "Only HR users can delete their account."})
+        request.user.delete()
+        return Response({"detail": "HR Account deleted successfully."}, status=status.HTTP_204_NO_CONTENT)

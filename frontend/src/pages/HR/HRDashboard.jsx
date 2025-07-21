@@ -1,11 +1,18 @@
-import React, { useEffect, useRef } from "react";
+// unchanged imports
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Dialog } from "@headlessui/react";
+import { FiX } from "react-icons/fi";
 import Navbar from "../../components/Navbar";
 import Chart from "chart.js/auto";
+import CreateJob from "./CreateJob";
+import ProfileCompletion from "./ProfileCompletion";
 
 const HRDashboard = () => {
   const trafficChartRef = useRef(null);
   const incomeChartRef = useRef(null);
+  const [isCreateJobModalOpen, setIsCreateJobModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   useEffect(() => {
     let trafficChartInstance = null;
@@ -17,12 +24,8 @@ const HRDashboard = () => {
         .getContext("2d");
       const ctxIncome = document.getElementById("incomeChart").getContext("2d");
 
-      if (trafficChartInstance) {
-        trafficChartInstance.destroy();
-      }
-      if (incomeChartInstance) {
-        incomeChartInstance.destroy();
-      }
+      if (trafficChartRef.current) trafficChartRef.current.destroy();
+      if (incomeChartRef.current) incomeChartRef.current.destroy();
 
       trafficChartInstance = new Chart(ctxTraffic, {
         type: "bar",
@@ -68,12 +71,8 @@ const HRDashboard = () => {
     }
 
     return () => {
-      if (trafficChartRef.current) {
-        trafficChartRef.current.destroy();
-      }
-      if (incomeChartRef.current) {
-        incomeChartRef.current.destroy();
-      }
+      if (trafficChartRef.current) trafficChartRef.current.destroy();
+      if (incomeChartRef.current) incomeChartRef.current.destroy();
     };
   }, []);
 
@@ -86,117 +85,113 @@ const HRDashboard = () => {
     jobOpenings: 5,
   };
 
+  const handleCreateJobSubmit = (jobData) => {
+    console.log("Job Data Submitted:", jobData);
+    setIsCreateJobModalOpen(false);
+  };
+
+  const handleProfileSubmit = (formData) => {
+    console.log("Profile Data Submitted:", formData);
+    setIsProfileModalOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
       <div className="p-8">
-        <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-blue-600 mb-6">
-            HR Dashboard
-          </h2>
-          <p className="text-black mb-6">
+        <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6 border">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">HR Dashboard</h2>
+            <button
+              onClick={() => setIsCreateJobModalOpen(true)}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+            >
+              Create New Job
+            </button>
+          </div>
+
+          <p className="text-gray-700 mb-6">
             This dashboard provides an overview of job postings, candidate
-            applications, and performance metrics. Use the charts and data below
-            to manage your hiring process effectively.
+            applications, and performance metrics.
           </p>
+
+          {/* Quick Actions at the top */}
+          <div className="bg-blue-50 p-6 rounded-lg border shadow-md mb-6">
+            <h3 className="text-lg font-semibold text-indigo-700 mb-2">
+              Quick Actions
+            </h3>
+            <Link
+              to="/view-candidates"
+              className="block text-indigo-600 hover:underline mb-2"
+            >
+              View Candidates
+            </Link>
+            <Link
+              to="/generate-report"
+              className="block text-indigo-600 hover:underline mb-2"
+            >
+              Generate Report
+            </Link>
+            <button
+              onClick={() => setIsProfileModalOpen(true)}
+              className="block text-indigo-600 hover:underline mb-2"
+            >
+              Update Profile
+            </button>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">
-                New Applications
-              </h3>
-              <p className="text-3xl font-bold text-black">
-                {metrics.newApplications}
-              </p>
-              <span className="text-green-600">+14%</span>
-            </div>
-            <div className="bg-red-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">
-                Total Hires
-              </h3>
-              <p className="text-3xl font-bold text-black">
-                {metrics.totalHires}
-              </p>
-              <span className="text-red-600">-7%</span>
-            </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">
-                Total Income
-              </h3>
-              <p className="text-3xl font-bold text-black">
-                {metrics.totalIncome}
-              </p>
-              <span className="text-green-600">+8%</span>
-            </div>
-            <div className="bg-yellow-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">
-                Pending Applications
-              </h3>
-              <p className="text-3xl font-bold text-black">
-                {metrics.pendingApplications}
-              </p>
-              <span className="text-orange-600">+5%</span>
-            </div>
+            <MetricCard
+              title="New Applications"
+              value={metrics.newApplications}
+              color="green"
+              trend="+14%"
+            />
+            <MetricCard
+              title="Total Hires"
+              value={metrics.totalHires}
+              color="red"
+              trend="-7%"
+            />
+            <MetricCard
+              title="Total Income"
+              value={metrics.totalIncome}
+              color="green"
+              trend="+8%"
+            />
+            <MetricCard
+              title="Pending Applications"
+              value={metrics.pendingApplications}
+              color="orange"
+              trend="+5%"
+            />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">
-                Traffic Sources
-              </h3>
-              <canvas id="trafficChart" width="400" height="200"></canvas>
-            </div>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">Income</h3>
-              <canvas id="incomeChart" width="200" height="200"></canvas>
-            </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">
-                Quick Actions
-              </h3>
-              <Link
-                to="/view-candidates"
-                className="block text-blue-600 hover:underline mb-2"
-              >
-                View Candidates
-              </Link>
-              <Link
-                to="/generate-report"
-                className="block text-blue-600 hover:underline mb-2"
-              >
-                Generate Report
-              </Link>
-              <Link
-                to="/edit-profile"
-                className="block text-blue-600 hover:underline"
-              >
-                Edit Profile
-              </Link>
-            </div>
-          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">
-                Interviews Scheduled
-              </h3>
-              <p className="text-3xl font-bold text-black">
-                {metrics.interviewsScheduled}
-              </p>
-              <span className="text-green-600">+10%</span>
-            </div>
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-600">
-                Job Openings
-              </h3>
-              <p className="text-3xl font-bold text-black">
-                {metrics.jobOpenings}
-              </p>
-              <span className="text-purple-600">+2%</span>
-            </div>
+            <ChartCard title="Traffic Sources" canvasId="trafficChart" />
+            <ChartCard title="Income" canvasId="incomeChart" />
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <MetricCard
+              title="Interviews Scheduled"
+              value={metrics.interviewsScheduled}
+              color="green"
+              trend="+10%"
+            />
+            <MetricCard
+              title="Job Openings"
+              value={metrics.jobOpenings}
+              color="purple"
+              trend="+2%"
+            />
+          </div>
+
           <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-blue-600">
+            <h3 className="text-lg font-semibold text-indigo-700">
               Recent Activities
             </h3>
-            <ul className="text-black list-disc pl-5">
+            <ul className="text-gray-700 list-disc pl-5">
               <li>New application from John Doe - 12:30 PM, Jul 15, 2025</li>
               <li>Job posted: Senior Developer - 10:00 AM, Jul 15, 2025</li>
               <li>
@@ -204,18 +199,68 @@ const HRDashboard = () => {
               </li>
             </ul>
           </div>
-          <div className="mt-6">
-            <Link
-              to="/create-job"
-              className="block w-48 bg-blue-600 text-white p-2 rounded-md text-center hover:bg-blue-700"
-            >
-              Create New Job
-            </Link>
-          </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <Dialog
+        open={isCreateJobModalOpen}
+        onClose={() => setIsCreateJobModalOpen(false)}
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center px-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
+            <button
+              onClick={() => setIsCreateJobModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
+            >
+              <FiX size={24} />
+            </button>
+            <h3 className="text-xl font-bold mb-4 text-center text-gray-800">
+              Create New Job Post
+            </h3>
+            <CreateJob onSubmit={handleCreateJobSubmit} />
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog
+        open={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center px-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
+            <button
+              onClick={() => setIsProfileModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
+            >
+              <FiX size={24} />
+            </button>
+            <h3 className="text-xl font-bold mb-4 text-center text-gray-800">
+              Update HR Profile
+            </h3>
+            <ProfileCompletion onSubmit={handleProfileSubmit} />
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
+
+const MetricCard = ({ title, value, color, trend }) => (
+  <div className={`bg-${color}-50 p-4 rounded-lg`}>
+    <h3 className="text-lg font-semibold text-indigo-700">{title}</h3>
+    <p className="text-3xl font-bold text-gray-800">{value}</p>
+    <span className={`text-${color}-600`}>{trend}</span>
+  </div>
+);
+
+const ChartCard = ({ title, canvasId }) => (
+  <div className="bg-gray-50 p-4 rounded-lg">
+    <h3 className="text-lg font-semibold text-indigo-700">{title}</h3>
+    <canvas id={canvasId} width="400" height="200"></canvas>
+  </div>
+);
 
 export default HRDashboard;

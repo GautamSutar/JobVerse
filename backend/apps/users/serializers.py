@@ -38,3 +38,9 @@ class SignupSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return user
+
+class CustomUserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'email', 'username']
+        read_only_fields = ['email', 'username']

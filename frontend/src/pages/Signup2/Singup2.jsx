@@ -13,7 +13,7 @@ export default function StudentSignupForm() {
     last_name: "",
     email: "",
     gender: "",
-    role: "", // changed from "student" to "" so user can select
+    role: "",
     password: "",
     confirm_password: "",
   });
@@ -34,17 +34,21 @@ export default function StudentSignupForm() {
 
   const validateForm = () => {
     const newErrors = {};
+
     if (!formData.username) newErrors.username = "Username is required";
     if (!formData.first_name) newErrors.first_name = "First name is required";
     if (!formData.last_name) newErrors.last_name = "Last name is required";
     if (!formData.email) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Invalid email format";
+
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.role) newErrors.role = "Role is required";
+
     if (!formData.password) newErrors.password = "Password is required";
     else if (formData.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
+
     if (!formData.confirm_password)
       newErrors.confirm_password = "Confirm password is required";
     else if (formData.confirm_password !== formData.password)
@@ -61,7 +65,7 @@ export default function StudentSignupForm() {
     try {
       const payload = {
         ...formData,
-        role: formData.role.toLowerCase(), // 🔥 convert role to lowercase
+        role: formData.role.toLowerCase(),
       };
 
       const response = await axios.post(`${API_URL}/auth/signup/`, payload);
@@ -92,51 +96,49 @@ export default function StudentSignupForm() {
   };
 
   return (
-    <div className="max-w-xl mt-8 mx-auto p-6 bg-white rounded-lg shadow">
+    <div className="max-w-xl mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
       <ToastContainer />
-      <h2 className="text-2xl font-semibold text-center mb-4">
-        Student Signup
-      </h2>
+      <h2 className="text-2xl font-bold text-center mb-6">Student Signup</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Username */}
         <div>
-          <label className="block mb-1">Username</label>
+          <label className="block mb-1 font-medium">Username</label>
           <input
+            type="text"
             name="username"
+            className="w-full border px-3 py-2 rounded"
+            placeholder="Enter username"
             value={formData.username}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-            type="text"
-            placeholder="Username"
           />
           {errors.username && <p className="text-red-500">{errors.username}</p>}
         </div>
 
-        {/* First + Last Name */}
+        {/* Name Fields */}
         <div className="flex gap-4">
           <div className="w-1/2">
-            <label className="block mb-1">First Name</label>
+            <label className="block mb-1 font-medium">First Name</label>
             <input
+              type="text"
               name="first_name"
+              className="w-full border px-3 py-2 rounded"
+              placeholder="First name"
               value={formData.first_name}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
-              type="text"
-              placeholder="First Name"
             />
             {errors.first_name && (
               <p className="text-red-500">{errors.first_name}</p>
             )}
           </div>
           <div className="w-1/2">
-            <label className="block mb-1">Last Name</label>
+            <label className="block mb-1 font-medium">Last Name</label>
             <input
+              type="text"
               name="last_name"
+              className="w-full border px-3 py-2 rounded"
+              placeholder="Last name"
               value={formData.last_name}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
-              type="text"
-              placeholder="Last Name"
             />
             {errors.last_name && (
               <p className="text-red-500">{errors.last_name}</p>
@@ -144,27 +146,27 @@ export default function StudentSignupForm() {
           </div>
         </div>
 
-        {/* Email + Gender */}
+        {/* Email & Gender */}
         <div className="flex gap-4">
           <div className="w-1/2">
-            <label className="block mb-1">Email</label>
+            <label className="block mb-1 font-medium">Email</label>
             <input
+              type="email"
               name="email"
+              className="w-full border px-3 py-2 rounded"
+              placeholder="Email address"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
-              type="email"
-              placeholder="Email"
             />
             {errors.email && <p className="text-red-500">{errors.email}</p>}
           </div>
           <div className="w-1/2">
-            <label className="block mb-1">Gender</label>
+            <label className="block mb-1 font-medium">Gender</label>
             <select
               name="gender"
+              className="w-full border px-3 py-2 rounded"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded"
             >
               <option value="">Select Gender</option>
               <option value="Male">Male</option>
@@ -176,14 +178,14 @@ export default function StudentSignupForm() {
           </div>
         </div>
 
-        {/* Role Field (NEW) */}
+        {/* Role */}
         <div>
-          <label className="block mb-1">Select Role</label>
+          <label className="block mb-1 font-medium">Role</label>
           <select
             name="role"
+            className="w-full border px-3 py-2 rounded"
             value={formData.role}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
           >
             <option value="">Select Role</option>
             <option value="Student">Student</option>
@@ -194,28 +196,28 @@ export default function StudentSignupForm() {
 
         {/* Password */}
         <div>
-          <label className="block mb-1">Password</label>
+          <label className="block mb-1 font-medium">Password</label>
           <input
+            type="password"
             name="password"
+            className="w-full border px-3 py-2 rounded"
+            placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-            type="password"
-            placeholder="Password"
           />
           {errors.password && <p className="text-red-500">{errors.password}</p>}
         </div>
 
         {/* Confirm Password */}
         <div>
-          <label className="block mb-1">Confirm Password</label>
+          <label className="block mb-1 font-medium">Confirm Password</label>
           <input
+            type="password"
             name="confirm_password"
+            className="w-full border px-3 py-2 rounded"
+            placeholder="Confirm Password"
             value={formData.confirm_password}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded"
-            type="password"
-            placeholder="Confirm Password"
           />
           {errors.confirm_password && (
             <p className="text-red-500">{errors.confirm_password}</p>
@@ -224,20 +226,20 @@ export default function StudentSignupForm() {
 
         {/* Submit Error */}
         {errors.submit && (
-          <p className="text-red-500 text-center">{errors.submit}</p>
+          <p className="text-center text-red-500">{errors.submit}</p>
         )}
 
         {/* Submit Button */}
         <div className="pt-4">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+            className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded"
           >
             Signup
           </button>
           <Link to="/login">
-            <div className="text-center mt-7">
-              If you have already account,{" "}
+            <div className="text-center mt-4 text-sm">
+              Already have an account?{" "}
               <span className="text-blue-800 underline font-bold">Login</span>
             </div>
           </Link>

@@ -152,10 +152,11 @@ from apps.users.models import CustomUser
 from apps.students.models import StudentProfile
 from apps.hr.models import HRProfile
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken 
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import SignupSerializer
-from rest_framework import generics
+from rest_framework import generics,permissions
 from django.contrib.auth import authenticate
 
 
@@ -226,7 +227,13 @@ class LogoutView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-
+User = get_user_model
+class DeleteAccountView(generics.DestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def delete(self, request, *args, **kwargs):
+        user = self.request.user
+        user.delete()
+        return Response({"message": "Account deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 
 

@@ -1,172 +1,258 @@
 import React, { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import axios from "axios";
+import { FiX } from "react-icons/fi";
+import Swal from "sweetalert2";
 
-const API_URL =
-  import.meta.env.VITE_REACT_APP_BACKEND_BASEURL ||
-  "http://127.0.0.1:8000/api/student/student-profiles/";
-
-const modelFields = {
-  "Full Name": "full_name",
-  Email: "email",
-  Phone: "mobile_number",
-  "Date of Birth": "date_of_birth",
-  Gender: "gender",
-  Address: "address",
-  "LinkedIn Profile": "linkedin_profile",
-  "GitHub Profile": "github_profile",
-  "Languages Known": "languages_known",
-
-  "College Name": "college_name",
-  Degree: "degree",
-  Branch: "branch",
-  Specialization: "specialization",
-  "Graduation Year": "graduation_year",
-  CGPA: "cgpa",
-  "School Name": "school_name",
-  "12th Marks": "marks_12",
-  "10th Marks": "marks_10",
-
-  Resume: "resume",
-  "Cover Letter": "cover_letter",
-  "ATS Score": "ats_score",
-  "Aptitude Score": "aptitude_score",
-  "AI Score": "ai_score",
-  "Interview Feedback": "Interview_Feedback",
-  "Interview Taken": "interview_taken",
-
-  "Certificate Name": "certificate_name",
-  "Certificate URL": "credential_url",
-  "Transcript File": "transcript_file",
-
-  "Internship Job Title": "job_title",
-  "Internship Company Name": "company_name",
-  "Internship Start Date": "start_date",
-  "Internship End Date": "end_date",
-  "Internship Description": "description",
-  "Internship Stipened": "stipened",
-  "Internship Experience": "experience",
-
-  "Project Title": "project_title",
-  "Project Description": "project_description",
-  "Technologies Used": "technologies_used",
-  "Project Role": "project_role",
-  "GitHub Link": "github_link",
-  "Live Link": "live_link",
-
-  "Technical Skills": "technical_skills",
-  "Soft Skills": "soft_skills",
-  "Preferred Roles": "preferred_roles",
-  "Job Type": "job_type",
-  "Preferred Location": "preferred_location",
-
-  "Achievement Title": "achievement_title",
-  "Achievement Description": "achievement_description",
-  "Achievement Type": "achievement_type",
-};
+const API_BASE =
+  import.meta.env.VITE_REACT_APP_BACKEND_BASEURL || "http://127.0.0.1:8000/api";
 
 export default function ProfileSection() {
   const [profileData, setProfileData] = useState({});
   const [isOpen, setIsOpen] = useState(false);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
 
-  const profileFields = Object.keys(modelFields);
+  const sections = {
+    "Personal Information": {
+      gender: "Gender",
+      date_of_birth: "Date of Birth",
+      mobile_number: "Mobile Number",
+      address: "Address",
+    },
+    "Social Links": {
+      linkedin_profile: "LinkedIn Profile",
+      github_profile: "GitHub Profile",
+    },
+    Education: {
+      college_name: "College Name",
+      degree: "Degree",
+      branch: "Branch",
+      specialization: "Specialization",
+      graduation_year: "Graduation Year",
+      school_name: "School Name",
+      marks_12: "12th Marks",
+      marks_10: "10th Marks",
+      cgpa: "CGPA",
+      languages_known: "Languages Known",
+    },
+    "Scores & Feedback": {
+      ats_score: "ATS Score",
+      aptitude_score: "Aptitude Score",
+      ai_score: "AI Score",
+      interview_Feedback: "Interview Feedback",
+      interview_taken: "Interview Taken",
+    },
+    "Upload Documents": {
+      resume: "Resume (PDF)",
+      cover_letter: "Cover Letter (PDF)",
+    },
+  };
 
-  const filledCount = profileFields.filter(
-    (field) => profileData[modelFields[field]]
-  ).length;
-  const completion = Math.round((filledCount / profileFields.length) * 100);
-
-  // Fetch profile data on mount
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/student/student-profiles/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    axios
+      .get(`${API_BASE}/student/student-profiles/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const data = res.data;
+        const user = data.user || {};
 
-        if (res.data) {
-          setProfileData(res.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch profile:", error);
-      }
-    };
+        const enrichedData = {
+          ...data,
+          first_name: user.first_name || "",
+          last_name: user.last_name || "",
+          username: user.username || "",
+          email: user.email || "",
+        };
 
-    fetchProfile();
+        setProfileData(enrichedData);
+      })
+      .catch((err) => console.error("Failed to fetch profile:", err));
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfileData((prev) => ({ ...prev, [modelFields[name]]: value }));
+    setProfileData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const { name } = e.target;
+    const file = e.target.files[0];
+    setProfileData((prev) => ({ ...prev, [name]: file }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      await axios.put(`${API_URL}/student/student-profiles/`, profileData, {
+      const formData = new FormData();
+      const userFields = ["first_name", "last_name"];
+      const userData = {};
+
+      userFields.forEach((key) => {
+        if (profileData[key]) {
+          userData[key] = profileData[key];
+        }
+      });
+
+      formData.append("user", JSON.stringify(userData));
+
+      const editableFields = Object.values(sections)
+        .flatMap((group) => Object.keys(group))
+        .filter((key) => !["email", "username"].includes(key));
+
+      editableFields.forEach((key) => {
+        const value = profileData[key];
+        if (value !== null && value !== undefined && value !== "") {
+          // Only append file if it's a File object
+          if (
+            ["resume", "cover_letter"].includes(key) &&
+            typeof value !== "string"
+          ) {
+            formData.append(key, value);
+          }
+          if (!["resume", "cover_letter"].includes(key)) {
+            formData.append(key, value);
+          }
+        }
+      });
+
+      await axios.patch(`${API_BASE}/student/student-profiles/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       });
+
+      Swal.fire({
+        icon: "success",
+        title: "Profile Updated",
+        text: "Your profile has been updated successfully.",
+        confirmButtonColor: "#22c55e",
+      });
       setIsOpen(false);
-      alert("Profile updated successfully");
     } catch (error) {
       console.error("Update failed:", error);
-      alert("Failed to update profile");
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: "There was an error updating your profile. Please try again.",
+        confirmButtonColor: "#ef4444",
+      });
     }
   };
 
   return (
-    <div className="mt-8 bg-white p-4 shadow rounded">
+    <div className="mt-8 bg-white p-6 shadow-md rounded-lg border">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Profile Completion</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Profile Completion</h2>
         <button
           onClick={() => setIsOpen(true)}
-          className="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
         >
           Edit Profile
         </button>
       </div>
-      <div className="mt-4 w-full bg-gray-200 h-4 rounded">
-        <div
-          className="bg-green-500 h-4 rounded"
-          style={{ width: `${completion}%` }}
-        />
-      </div>
-      <p className="mt-2 text-gray-600">{completion}% completed</p>
 
-      <Dialog open={isOpen} onClose={() => setIsOpen(false)}>
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+      <div className="mt-4 text-gray-700 space-y-2">
+        <p>
+          <strong>👤 Name:</strong> {profileData.first_name}{" "}
+          {profileData.last_name}
+        </p>
+        <p>
+          <strong>📧 Email:</strong> {profileData.email}
+        </p>
+        <p>
+          <strong>🔐 Username:</strong> {profileData.username}
+        </p>
+        <p>
+          <strong>🎓 College:</strong> {profileData.college_name}
+        </p>
+        <p>
+          <strong>📚 Branch:</strong> {profileData.branch}
+        </p>
+        <p>
+          <strong>📆 Graduation Year:</strong> {profileData.graduation_year}
+        </p>
+      </div>
+
+      <Dialog
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center px-4">
           <form
             onSubmit={handleSubmit}
-            className="bg-white p-6 rounded-lg shadow w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-4"
+            className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto space-y-6 relative"
           >
-            <h3 className="text-xl font-bold mb-2">Update Profile</h3>
-            {profileFields.map((field) => (
-              <div key={field}>
-                <label className="block text-sm font-medium mb-1">
-                  {field}
-                </label>
-                <input
-                  name={field}
-                  type="text"
-                  value={profileData[modelFields[field]] || ""}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                />
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="absolute top-3 right-3 text-gray-600 hover:text-red-500 transition"
+            >
+              <FiX size={24} />
+            </button>
+
+            <h3 className="text-xl font-bold mb-4 text-center text-gray-800">
+              Update Your Profile
+            </h3>
+
+            {Object.entries(sections).map(([sectionTitle, fields]) => (
+              <div key={sectionTitle}>
+                <h4 className="text-lg font-semibold text-indigo-700 mb-2">
+                  {sectionTitle}
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {Object.entries(fields).map(([field, label]) => (
+                    <div key={field} className="flex flex-col">
+                      <label className="text-sm font-semibold mb-1 text-gray-700">
+                        {label}
+                      </label>
+                      {["resume", "cover_letter"].includes(field) ? (
+                        <>
+                          <input
+                            type="file"
+                            name={field}
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleFileChange}
+                            className="border rounded px-3 py-2 text-sm"
+                          />
+                          {profileData[field] &&
+                            typeof profileData[field] === "string" && (
+                              <a
+                                href={profileData[field]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-600 underline mt-1"
+                              >
+                                View Existing {label}
+                              </a>
+                            )}
+                        </>
+                      ) : (
+                        <input
+                          name={field}
+                          type={field.includes("date") ? "date" : "text"}
+                          value={profileData[field] || ""}
+                          onChange={handleChange}
+                          className="border rounded px-3 py-2 text-sm"
+                          readOnly={["email", "username"].includes(field)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Save Profile
-            </button>
+
+            <div className="flex justify-end pt-4">
+              <button
+                type="submit"
+                className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
+              >
+                Save Profile
+              </button>
+            </div>
           </form>
         </div>
       </Dialog>

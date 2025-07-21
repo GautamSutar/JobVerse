@@ -5,7 +5,7 @@ class StudentProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='student_profile')
 
         
-    mobile_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
+    mobile_number = models.CharField(max_length=15, unique=False, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=255, blank=True)
@@ -30,7 +30,7 @@ class StudentProfile(models.Model):
     ats_score = models.IntegerField(blank=True, null=True)
     aptitude_score = models.IntegerField(blank=True, null=True)
     ai_score = models.IntegerField(blank=True, null=True)
-    Interview_Feedback = models.TextField(blank=True, null=True)
+    interview_Feedback = models.TextField(blank=True, null=True)
     interview_taken = models.IntegerField(default=0)
 
     def __str__(self):
@@ -57,7 +57,7 @@ class Internship(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    stipened = models.CharField(max_length=50, blank=True, null=True)
+    stipend = models.CharField(max_length=50, blank=True, null=True)
     experience = models.TextField(blank=True, null=True)
 
 

@@ -3,6 +3,7 @@ import ScoresSection from "../../pages/Student/ScoresSection";
 import JobsSection from "../../pages/Student/JobsSection";
 import AppliedJobsSection from "../../pages/Student/AppliedJobsSection";
 import ProfileSection from "../../pages/Student/ProfileSection";
+import ResumeUploadSection from "../../pages/Student/ResumeUploadSection"; // ✅ new import
 
 export default function StudentDashboard() {
   return (
@@ -13,6 +14,7 @@ export default function StudentDashboard() {
         <ScoresSection />
         <AppliedJobsSection />
         <ProfileSection />
+        <ResumeUploadSection /> {/* ✅ new section */}
       </div>
 
       <JobsSection />

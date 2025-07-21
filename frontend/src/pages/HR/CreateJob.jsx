@@ -1,166 +1,126 @@
+// CreateJob.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-const CreateJob = () => {
+const CreateJob = ({ onSubmit }) => {
   const [jobData, setJobData] = useState({
     title: "",
-    role: "",
     description: "",
-    responsibilities: "",
     location: "",
+    job_type: "",
     salary: "",
-    skills: "",
-    experience: "",
+    skills_required: "",
     deadline: "",
   });
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Simulate job save
-    navigate("/hr-dashboard");
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setJobData({ ...jobData, [name]: value });
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(jobData);
+  };
+
   return (
-    <div className="min-h-screen bg-white p-8 mt-32">
-      <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-blue-600 mb-6">
-          Create New Job Post
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-black font-medium">Job Title *</label>
-            <input
-              type="text"
-              name="title"
-              value={jobData.title}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-black font-medium">Job Role *</label>
-            <select
-              name="role"
-              value={jobData.role}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-            >
-              <option value="">Select Role</option>
-              <option value="Frontend">Frontend</option>
-              <option value="Backend">Backend</option>
-              <option value="Full Stack">Full Stack</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-black font-medium">
-              Job Description *
-            </label>
-            <textarea
-              name="description"
-              value={jobData.description}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-              rows="4"
-            ></textarea>
-          </div>
-          <div>
-            <label className="block text-black font-medium">
-              Responsibilities *
-            </label>
-            <textarea
-              name="responsibilities"
-              value={jobData.responsibilities}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-              rows="4"
-            ></textarea>
-          </div>
-          <div>
-            <label className="block text-black font-medium">Location *</label>
-            <input
-              type="text"
-              name="location"
-              value={jobData.location}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-black font-medium">
-              Salary (CTC/Per Month) *
-            </label>
-            <input
-              type="text"
-              name="salary"
-              value={jobData.salary}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <div>
-            <label className="block text-black font-medium">
-              Required Skills / ATS Keywords *
-            </label>
-            <input
-              type="text"
-              name="skills"
-              value={jobData.skills}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-              placeholder="Comma-separated skills"
-            />
-          </div>
-          <div>
-            <label className="block text-black font-medium">
-              Experience Level *
-            </label>
-            <select
-              name="experience"
-              value={jobData.experience}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-            >
-              <option value="">Select Experience</option>
-              <option value="0-1">0-1 Years</option>
-              <option value="2-3">2-3 Years</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-black font-medium">
-              Application Deadline *
-            </label>
-            <input
-              type="date"
-              name="deadline"
-              value={jobData.deadline}
-              onChange={handleInputChange}
-              required
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <h2 className="text-xl font-semibold mb-4">Create New Job</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium">Title *</label>
+          <input
+            type="text"
+            name="title"
+            value={jobData.title}
+            onChange={handleInputChange}
+            required
+            className="w-full border rounded px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Location *</label>
+          <input
+            type="text"
+            name="location"
+            value={jobData.location}
+            onChange={handleInputChange}
+            required
+            className="w-full border rounded px-3 py-2"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Job Type *</label>
+          <select
+            name="job_type"
+            value={jobData.job_type}
+            onChange={handleInputChange}
+            required
+            className="w-full border rounded px-3 py-2"
           >
-            Save Job
-          </button>
-        </form>
+            <option value="">Select Job Type</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Internship">Internship</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Salary</label>
+          <input
+            type="text"
+            name="salary"
+            value={jobData.salary}
+            onChange={handleInputChange}
+            className="w-full border rounded px-3 py-2"
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium">Skills Required</label>
+          <input
+            type="text"
+            name="skills_required"
+            value={jobData.skills_required}
+            onChange={handleInputChange}
+            placeholder="Comma-separated skills"
+            className="w-full border rounded px-3 py-2"
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium">Description *</label>
+          <textarea
+            name="description"
+            value={jobData.description}
+            onChange={handleInputChange}
+            required
+            className="w-full border rounded px-3 py-2"
+          />
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className="block text-sm font-medium">Deadline *</label>
+          <input
+            type="date"
+            name="deadline"
+            value={jobData.deadline}
+            onChange={handleInputChange}
+            required
+            className="w-full border rounded px-3 py-2"
+          />
+        </div>
       </div>
-    </div>
+
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Post Job
+        </button>
+      </div>
+    </form>
   );
 };
 
