@@ -7,6 +7,17 @@ from dotenv import load_dotenv
 from datetime import timedelta
 
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # or your provider
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'travelmitra.in@gmail.com'
+EMAIL_HOST_PASSWORD = 'dyrb uesg kcon yxdi'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+  
+
 load_dotenv()  # Load environment variables from .env file
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,9 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'apps.users',
     'corsheaders',
-    'apps.interviews_ai',
     'apps.resume_parsing',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',  
@@ -42,6 +51,9 @@ INSTALLED_APPS = [
     'apps.users.apps.UsersConfig',
     'apps.students.apps.StudentsConfig',
     'apps.hr.apps.HrConfig',
+    'apps.job_applications.apps.JobApplicationsConfig',
+    'apps.jobs.apps.JobsConfig',
+    "apps.scheduleInterviews.apps.ScheduleinterviewsConfig"
 ]
 
 #  Middleware

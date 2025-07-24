@@ -26,6 +26,7 @@ export default function LoginForm() {
 
       localStorage.setItem("authToken", accessToken);
       localStorage.setItem("userRole", role);
+      console.log(accessToken)
       toast.success("Login successful!", {
         position: "top-right",
         autoClose: 2000,

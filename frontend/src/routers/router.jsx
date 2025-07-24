@@ -61,12 +61,7 @@ const router = createBrowserRouter([
         element: <ProfileCompletion />,
       },
       {
-        path: "/hr-dashboard",
-        element: (
-          <ProtectedRoute allowedRoles="hr">
-            <HRDashboard />
-          </ProtectedRoute>
-        ),
+        path: "/hr-dashboard", element: ( <ProtectedRoute allowedRoles="hr"> <HRDashboard /> </ProtectedRoute>),
       },  
       {
         path: "/create-job",

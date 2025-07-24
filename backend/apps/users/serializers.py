@@ -16,8 +16,7 @@ class SignupSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'role',
-            'gender',
-            'profile_picture',  
+            'gender', 
             'password',
             'confirm_password'
         ]
