@@ -42,11 +42,20 @@ class UpdateJobView(UpdateAPIView):
 class DeleteJobView(DestroyAPIView):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     lookup_field = 'id'
 
     def delete(self, request, *args, **kwargs):
         job = self.get_object()
+        if request.user.role != 'hr':
+            return Response({"error": "Student can Delete job. You are not HR"}, status=status.HTTP_403_FORBIDDEN)
         if request.user != job.hr:
             return Response({"error": "You can only delete your own job."}, status=status.HTTP_403_FORBIDDEN)
-        return super().delete(request, *args, **kwargs)
+        return self.perform_destroy(job)
+    
+    def perform_destroy(self, instance):
+        job_title = instance.title,
+        instance.delete()
+        return Response({'message':f'Job {job_title} deleted successfully'},status=status.HTTP_200_OK)
+    
+    

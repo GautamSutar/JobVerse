@@ -17,4 +17,5 @@ urlpatterns = [
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('api/job/', include('apps.jobs.urls')),
     path('api/job-applications/', include('apps.job_applications.urls')),
+    path('api/', include('apps.audioapp.urls')),
 ]

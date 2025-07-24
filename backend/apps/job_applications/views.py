@@ -9,9 +9,9 @@ from apps.utils.resume_matcher.matcher import calculate_resume_score
 from apps.job_applications.Email.confirmationEmail import send_application_confirmation
 class ApplyToJob(APIView):
     permission_classes = [permissions.IsAuthenticated]
-    def post(self, request):
-        job_id = request.data.get('job_id')
-        job = get_object_or_404(Job, id=job_id)
+    def post(self, request, id):
+        # job_id = request.data.get('job_id')
+        job = get_object_or_404(Job, id=id)
         student = request.user.role
         email = request.user.email
         first_name = request.user.first_name  

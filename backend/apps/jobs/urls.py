@@ -1,6 +1,8 @@
 from django.urls import path 
 from .views import CreateJobView, ListAllJobs, RetrieveJobByIdView, UpdateJobView, DeleteJobView
 
+
+
 urlpatterns = [
     path('create/', CreateJobView.as_view(), name='create-job'),
     path('list-all-jobs/', ListAllJobs.as_view(), name='list-all-jobs'),

@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'apps.hr.apps.HrConfig',
     'apps.job_applications.apps.JobApplicationsConfig',
     'apps.jobs.apps.JobsConfig',
-    "apps.scheduleInterviews.apps.ScheduleinterviewsConfig"
+    "apps.scheduleInterviews.apps.ScheduleinterviewsConfig",
+    "apps.audioapp.apps.AudioappConfig"
 ]
 
 #  Middleware
