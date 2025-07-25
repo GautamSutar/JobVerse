@@ -3,8 +3,8 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
-import Login from "../pages/Login/Login";
-import Signup from "../pages/Signup/signup";
+// import Login from "../pages/Login/Login";
+// import Signup from "../pages/Signup/signup";
 import Features from "../pages/Features/Features";
 // import Practice from "../pages/Practice/Practice";
 import Landing from "../pages/Landing/Landing";
@@ -18,6 +18,7 @@ import CreateJob from "../pages/HR/CreateJob";
 import StudentDashboard from "../pages/Student/StudentDashboard";
 import NotFound from "../pages/Student/NotFound";
 import ProtectedRoute from "../components/Protected/ProtectedRoute";
+import SeeJobs from "../pages/HR/SeeJobs";
 
 const router = createBrowserRouter([
   {
@@ -61,8 +62,13 @@ const router = createBrowserRouter([
         element: <ProfileCompletion />,
       },
       {
-        path: "/hr-dashboard", element: ( <ProtectedRoute allowedRoles="hr"> <HRDashboard /> </ProtectedRoute>),
-      },  
+        path: "/hr-dashboard",
+        element: (
+          <ProtectedRoute allowedRoles="hr">
+            <HRDashboard />
+          </ProtectedRoute>
+        ),
+      },
       {
         path: "/create-job",
         element: <CreateJob />,
@@ -78,6 +84,14 @@ const router = createBrowserRouter([
       {
         path: "*",
         element: <NotFound />,
+      },
+      {
+        path: "/see-job",
+        element: (
+          <ProtectedRoute allowedRoles="hr">
+            <SeeJobs />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

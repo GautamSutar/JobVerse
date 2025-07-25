@@ -115,29 +115,37 @@ const HRDashboard = () => {
             applications, and performance metrics.
           </p>
 
-          {/* Quick Actions at the top */}
+          {/* Quick Actions (Updated to horizontal with buttons) */}
           <div className="bg-blue-50 p-6 rounded-lg border shadow-md mb-6">
-            <h3 className="text-lg font-semibold text-indigo-700 mb-2">
+            <h3 className="text-lg font-semibold text-indigo-700 mb-4">
               Quick Actions
             </h3>
-            <Link
-              to="/view-candidates"
-              className="block text-indigo-600 hover:underline mb-2"
-            >
-              View Candidates
-            </Link>
-            <Link
-              to="/generate-report"
-              className="block text-indigo-600 hover:underline mb-2"
-            >
-              Generate Report
-            </Link>
-            <button
-              onClick={() => setIsProfileModalOpen(true)}
-              className="block text-indigo-600 hover:underline mb-2"
-            >
-              Update Profile
-            </button>
+            <div className="flex flex-wrap gap-4">
+              <Link
+                to="/view-candidates"
+                className="bg-white border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-600 hover:text-white transition"
+              >
+                View Candidates
+              </Link>
+              <Link
+                to="/generate-report"
+                className="bg-white border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-600 hover:text-white transition"
+              >
+                Generate Report
+              </Link>
+              <button
+                onClick={() => setIsProfileModalOpen(true)}
+                className="bg-white border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-600 hover:text-white transition"
+              >
+                Update Profile
+              </button>
+              <Link
+                to="/see-job"
+                className="bg-white border border-indigo-600 text-indigo-600 px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-600 hover:text-white transition"
+              >
+                See Jobs
+              </Link>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
@@ -208,7 +216,7 @@ const HRDashboard = () => {
         onClose={() => setIsCreateJobModalOpen(false)}
         className="relative z-50"
       >
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center px-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center px-4">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
             <button
               onClick={() => setIsCreateJobModalOpen(false)}

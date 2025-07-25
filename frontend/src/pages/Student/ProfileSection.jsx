@@ -180,7 +180,7 @@ export default function ProfileSection() {
         onClose={() => setIsOpen(false)}
         className="relative z-50"
       >
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center px-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center px-4">
           <form
             onSubmit={handleSubmit}
             className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto space-y-6 relative"

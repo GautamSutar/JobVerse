@@ -3,7 +3,7 @@ from django.conf import settings
 
 def send_application_confirmation(student_email, student_name, job_title):
     subject = f"🎉 You Successfully Applied for {job_title}!"
-    plain_message = f"Hi {student_name}, you've successfully applied to {job_title}. Thank you for using JobVerse. Wait for HR to respond."
+    plain_message = f"Hi {student_name}, you've successfully applied to {job_title}. Thank you for using Exoic-Job Verse. Wait for HR to respond."
     
     html_message = f"""
     <html>
@@ -38,9 +38,9 @@ def send_application_confirmation(student_email, student_name, job_title):
             </div>
 
             <p style="margin-top: 40px; color: #888; font-size: 14px; text-align: center;">
-                🚀 Thanks again for choosing <strong>JobVerse</strong>. We wish you the best in your job hunt!
+                🚀 Thanks again for choosing <strong>Exoic-Job Verse</strong>. We wish you the best in your job hunt!
                 <br><br>
-                — The JobVerse Team
+                — The Exoic-Job Verse Team
             </p>
         </div>
     </body>
