@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { FiMenu, FiX, FiSend } from "react-icons/fi";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const token = localStorage.getItem("authToken");
   const role = localStorage.getItem("userRole");
+  const refreshToken = localStorage.getItem("refreshToken");
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleDashboardClick = (event) => {
     event.preventDefault();
@@ -26,15 +25,53 @@ const Navbar = () => {
     }
   };
 
+  const handleLogout = async () => {
+    // Clear localStorage
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("first_name");
+    localStorage.removeItem("last_name");
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/auth/logout/`,
+        { refreshToken },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith("hrJobs_")) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
+  const shouldShowDashboardButton =
+    token && (role === "student" || role === "hr");
+
   const buttonClass = `
     px-4 py-2 rounded-full 
     flex items-center gap-2 
     text-slate-500
     shadow-[-5px_-5px_10px_rgba(255,_255,_255,_0.8),_5px_5px_10px_rgba(0,_0,_0,_0.25)]
-    transition-all
-    hover:shadow-[-1px_-1px_5px_rgba(255,_255,_255,_0.6),_1px_1px_5px_rgba(0,_0,_0,_0.3),inset_-2px_-2px_5px_rgba(255,_255,_255,_1),inset_2px_2px_4px_rgba(0,_0,_0,_0.3)]
     hover:text-violet-500
+    transition-all duration-300 ease-in-out
+    hover:shadow-[-1px_-1px_5px_rgba(255,_255,_255,_0.6),_1px_1px_5px_rgba(0,_0,_0,_0.3),inset_-2px_-2px_5px_rgba(255,_255,_255,_1),inset_2px_2px_4px_rgba(0,_0,_0,_0.3)]
+    cursor-pointer
   `;
+
+  const navItems = ["Home", "About", "Features", "Practice", "Contact"];
 
   return (
     <nav className="bg-white text-black p-4 shadow-xl fixed w-full top-0 z-50">
@@ -53,28 +90,65 @@ const Navbar = () => {
           </h1>
         </div>
 
-        {/* Desktop Menu */}
         <ul className="hidden md:flex space-x-6">
-          {["Home", "About", "Features", "Practice", "Contact", "Login"].map(
-            (item, index) => (
-              <li key={index}>
-                <Link
-                  to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                  className={buttonClass}
-                >
-                  <FiSend />
-                  <span>{item}</span>
-                </Link>
-              </li>
-            )
+          {navItems.map((item, index) => {
+            if (item === "Practice") {
+              if (token && role === "student") {
+                return (
+                  <li key={index}>
+                    <Link
+                      to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                      className={buttonClass}
+                    >
+                      <FiSend />
+                      <span>{item}</span>
+                    </Link>
+                  </li>
+                );
+              } else return null;
+            } else {
+              return (
+                <li key={index}>
+                  <Link
+                    to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                    className={buttonClass}
+                  >
+                    <FiSend />
+                    <span>{item}</span>
+                  </Link>
+                </li>
+              );
+            }
+          })}
+          <div className="relative group inline-block">
+            <button className={buttonClass}>
+              <FiSend />
+              <span>Account</span>
+            </button>
+            <div className="absolute hidden group-hover:flex flex-col bg-white rounded-lg shadow-md font-semibold py-2 z-20 w-32">
+              <Link to="/login" className={buttonClass}>
+                <FiSend />
+                Login
+              </Link>
+              <Link to="/signup" className={buttonClass}>
+                <FiSend />
+                Signup
+              </Link>
+              <button onClick={handleLogout} className={buttonClass}>
+                <FiSend />
+                Logout
+              </button>
+            </div>
+          </div>
+          {shouldShowDashboardButton && (
+            <button onClick={handleDashboardClick} className={buttonClass}>
+              <FiSend />
+              <span>Dashboard</span>
+            </button>
           )}
-          <button onClick={handleDashboardClick} className={buttonClass}>
-            <FiSend />
-            <span>Dashboard</span>
-          </button>
         </ul>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Toggle */}
         <button className="md:hidden text-2xl" onClick={toggleMenu}>
           {isOpen ? <FiX /> : <FiMenu />}
         </button>
@@ -84,30 +158,61 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg">
           <ul className="flex flex-col items-center space-y-4 py-5">
-            {[
-              "Home",
-              "About",
-              "Features",
-              "Practice",
-              "Feedback",
-              "Contact",
-              "Login",
-            ].map((item, index) => (
-              <li key={index}>
-                <Link
-                  to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
-                  className={buttonClass}
-                  onClick={() => setIsOpen(false)}
-                >
+            {navItems.map((item, index) => {
+              if (item === "Practice") {
+                if (token && role === "student") {
+                  return (
+                    <li key={index}>
+                      <Link
+                        to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                        className={buttonClass}
+                      >
+                        <FiSend />
+                        <span>{item}</span>
+                      </Link>
+                    </li>
+                  );
+                } else return null;
+              } else {
+                return (
+                  <li key={index}>
+                    <Link
+                      to={`/${item.toLowerCase().replace(/\s+/g, "-")}`}
+                      className={buttonClass}
+                    >
+                      <FiSend />
+                      <span>{item}</span>
+                    </Link>
+                  </li>
+                );
+              }
+            })}
+            <div className="relative group inline-block">
+              <button className={buttonClass}>
+                <FiSend />
+                <span>Account</span>
+              </button>
+              <div className="absolute hidden group-hover:flex flex-col bg-white rounded-lg shadow-md font-semibold py-2 z-20 w-32">
+                <Link to="/login" className={buttonClass}>
                   <FiSend />
-                  <span>{item}</span>
+                  Login
                 </Link>
-              </li>
-            ))}
-            <button onClick={handleDashboardClick} className={buttonClass}>
-              <FiSend />
-              <span>Dashboard</span>
-            </button>
+                <Link to="/signup" className={buttonClass}>
+                  <FiSend />
+                  Signup
+                </Link>
+                <button onClick={handleLogout} className={buttonClass}>
+                  <FiSend />
+                  Logout
+                </button>
+              </div>
+            </div>
+            {shouldShowDashboardButton && (
+              <button onClick={handleDashboardClick} className={buttonClass}>
+                <FiSend />
+                <span>Dashboard</span>
+              </button>
+            )}
           </ul>
         </div>
       )}

@@ -4,52 +4,63 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from .models import HRProfile
+from rest_framework import generics, permissions, status
 from .serializers import HRProfileSerializer
 from apps.jobs.models.jobsModel import Job
 from apps.jobs.job_serializer import JobSerializer
 
 
-class HRProfileCreateUpdateView(APIView):
+class HRProfileCreateUpdateView(generics.GenericAPIView):
+    serializer_class = HRProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request):
-        try:
-            profile = HRProfile.objects.get(user=request.user)
-            serializer = HRProfileSerializer(profile)
-            return Response(serializer.data)
-        except HRProfile.DoesNotExist:
-            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+    def get_object(self):
+        return HRProfile.objects.filter(user=self.request.user).first()
 
-    def post(self, request):
-        serializer = HRProfileSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()  # create method will use request.user
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        profile = self.get_object()
+        if not profile:
+            return Response({"detail": "Hr profile not found."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(profile)
+        return Response(serializer.data)
 
-    def put(self, request):
-        try:
-            profile = HRProfile.objects.get(user=request.user)
-        except HRProfile.DoesNotExist:
-            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+    def post(self, request, *args, **kwargs):
+        profile = self.get_object()
+        if profile:
+            serializer = self.get_serializer(profile, data=request.data, partial=True)
+        else:
+            serializer = self.get_serializer(data=request.data)
 
-        serializer = HRProfileSerializer(profile, data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response({
+        "message": "Profile saved successfully.",
+        "data": serializer.data
+    }, status=status.HTTP_200_OK)
 
-    def patch(self, request):
-        try:
-            profile = HRProfile.objects.get(user=request.user)
-        except HRProfile.DoesNotExist:
-            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+    def put(self, request, *args, **kwargs):
+        profile = self.get_object()
+        if not profile:
+            profile = HRProfile.objects.create(user=request.user)
+        serializer = self.get_serializer(profile, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+        "message": "Profile updated successfully.",
+        "data": serializer.data
+    }, status=status.HTTP_200_OK)
 
-        serializer = HRProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def patch(self, request, *args, **kwargs):
+        profile = self.get_object()
+        if not profile:
+            profile = HRProfile.objects.create(user=request.user)
+        serializer = self.get_serializer(profile, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+        "message": "Profile field updated successfully.",
+        "data": serializer.data
+    }, status=status.HTTP_200_OK)
 
 
 

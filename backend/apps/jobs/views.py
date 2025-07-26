@@ -19,8 +19,11 @@ class CreateJobView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ListAllJobs(ListAPIView):
-   queryset = Job.objects.all().order_by('-created_at')
+   permission_classes = [permissions.IsAuthenticated]
    serializer_class = JobSerializer
+   def get_queryset(self):
+    user = self.request.user
+    return Job.objects.filter(hr=user) if user.role == 'hr' else Job.objects.none()
 
 class RetrieveJobByIdView(RetrieveAPIView):
     queryset = Job.objects.all()

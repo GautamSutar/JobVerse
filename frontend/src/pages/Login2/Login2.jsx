@@ -22,11 +22,21 @@ export default function LoginForm() {
     try {
       const response = await axios.post(`${API_URL}/auth/login/`, data);
 
-      const { accessToken, role } = response.data;
+      const { accessToken, role,refreshtoken, email, first_name, last_name } = response.data;
 
       localStorage.setItem("authToken", accessToken);
+      localStorage.setItem("refreshToken", refreshtoken);
       localStorage.setItem("userRole", role);
-      console.log(accessToken)
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userFirstName", first_name);
+      localStorage.setItem("userLastName", last_name);
+      console.log(refreshtoken);
+      console.log(accessToken);
+      console.log(role);
+      console.log(email);
+      console.log(first_name);
+      console.log(last_name);
+
       toast.success("Login successful!", {
         position: "top-right",
         autoClose: 2000,

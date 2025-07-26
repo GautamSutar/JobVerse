@@ -160,19 +160,31 @@ export default function StudentSignupForm() {
             />
             {errors.email && <p className="text-red-500">{errors.email}</p>}
           </div>
-          <div className="w-1/2">
-            <label className="block mb-1 font-medium">Gender</label>
+          <div className="w-1/2 cursor-pointer">
+            <label className="block mb-1 font-medium cursor-pointer">
+              Gender
+            </label>
             <select
               name="gender"
-              className="w-full border px-3 py-2 rounded"
+              className="w-full border px-3 cursor-pointer py-2 rounded"
               value={formData.gender}
               onChange={handleChange}
             >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-              <option value="Not prefer to say">Prefer not to say</option>
+              <option className="cursor-pointer" value="">
+                Select Gender
+              </option>
+              <option className="cursor-pointer" value="Male">
+                Male
+              </option>
+              <option className="cursor-pointer" value="Female">
+                Female
+              </option>
+              <option className="cursor-pointer" value="Other">
+                Other
+              </option>
+              <option className="cursor-pointer" value="Not prefer to say">
+                Prefer not to say
+              </option>
             </select>
             {errors.gender && <p className="text-red-500">{errors.gender}</p>}
           </div>

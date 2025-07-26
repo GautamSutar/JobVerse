@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import { FiX } from "react-icons/fi";
-import Navbar from "../../components/Navbar";
+import HrNav from "./HrNav";
 import Chart from "chart.js/auto";
 import CreateJob from "./CreateJob";
 import ProfileCompletion from "./ProfileCompletion";
@@ -97,9 +97,9 @@ const HRDashboard = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      <HrNav />
       <div className="p-8">
-        <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6 border">
+        <div className="max-w-7xl mx-auto bg-white rounded-lg p-6 ">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">HR Dashboard</h2>
             <button
@@ -116,7 +116,7 @@ const HRDashboard = () => {
           </p>
 
           {/* Quick Actions (Updated to horizontal with buttons) */}
-          <div className="bg-blue-50 p-6 rounded-lg border shadow-md mb-6">
+          <div className="bg-blue-50 p-6 rounded-lg  shadow-md mb-6">
             <h3 className="text-lg font-semibold text-indigo-700 mb-4">
               Quick Actions
             </h3>

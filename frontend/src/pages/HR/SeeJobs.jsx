@@ -3,38 +3,83 @@ import axios from "axios";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import Swal from "sweetalert2";
 import CreateJob from "./CreateJob";
+import { resolveElements } from "framer-motion";
 
 const SeeJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [editingJob, setEditingJob] = useState(null); // for modal
+  const [editingJob, setEditingJob] = useState(null);
+
   const token = localStorage.getItem("authToken");
   const role = localStorage.getItem("userRole");
+  const email = localStorage.getItem("userEmail");
+  console.log(email);
+  console.log(role);
+  const cacheKey = email ? `hrJobs_${email}` : null;
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      if (!token) {
-        setError("You must be logged in to view jobs.");
-        setLoading(false);
-        return;
+    if (!email || !cacheKey || !token) {
+      console.warn("Missing email/token/cacheKey → skipping job fetch");
+      return;
+    }
+
+    const loadJobs = async () => {
+      const cached = localStorage.getItem(cacheKey);
+      let isExpired = true;
+      let parsed = null;
+
+      if (cached) {
+        try {
+          parsed = JSON.parse(cached);
+          isExpired = Date.now() - parsed.timestamp > 5 * 60 * 1000;
+          if (parsed.email !== email) {
+            console.log("❌ Email mismatch. Clearing old HR cache.");
+            localStorage.removeItem(cacheKey);
+            parsed = null;
+            isExpired = true;
+          }
+        } catch (err) {
+          console.error("Failed to parse cached data", err);
+        }
       }
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
-          }/job/list-all-jobs/`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setJobs(response.data);
-      } catch (err) {
-        setError(err.response?.data?.detail || "Failed to fetch jobs");
-      } finally {
+      if (parsed && !isExpired) {
+        console.log("✅ Loaded fresh cache for HR:", email);
+        setJobs(parsed.data || [])
         setLoading(false);
+      }
+      else {
+        try {
+          const response = await axios.get(
+            `${
+              import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+            }/job/list-all-jobs`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setJobs(response.data);
+          localStorage.setItem(
+            cacheKey,
+            JSON.stringify({
+              data: response.data,
+              timestamp: Date.now(),
+              email: email
+            })
+          )
+        } catch (err) {
+          console.error("❌ Failed to fetch jobs", err);
+          setError("Failed to fetch jobs");
+        } finally {
+          setLoading(false);
+        }
       }
     };
-    fetchJobs();
-  }, [token]);
+
+    loadJobs();
+  }, [email, cacheKey, token]);
 
   const handleDelete = async (jobId) => {
     Swal.fire({
@@ -52,9 +97,18 @@ const SeeJobs = () => {
             `${
               import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
             }/job/delete-job/${jobId}/`,
-            { headers: { Authorization: `Bearer ${token}` } }
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
-          setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+          const updatedJobs = jobs.filter((job) => job.id !== jobId);
+          setJobs(updatedJobs);
+          localStorage.setItem(
+            cacheKey,
+            JSON.stringify({ data: updatedJobs, timestamp: Date.now() })
+          );
           Swal.fire("Deleted!", "The job has been deleted.", "success");
         } catch (err) {
           Swal.fire(
@@ -68,12 +122,16 @@ const SeeJobs = () => {
   };
 
   const handleEditClick = (job) => setEditingJob(job);
-
   const handleModalClose = () => setEditingJob(null);
 
   const handleJobUpdate = (updatedJob) => {
-    setJobs((prevJobs) =>
-      prevJobs.map((job) => (job.id === updatedJob.id ? updatedJob : job))
+    const updatedJobs = jobs.map((job) =>
+      job.id === updatedJob.id ? updatedJob : job
+    );
+    setJobs(updatedJobs);
+    localStorage.setItem(
+      cacheKey,
+      JSON.stringify({ data: updatedJobs, timestamp: Date.now() })
     );
     setEditingJob(null);
   };
@@ -83,10 +141,10 @@ const SeeJobs = () => {
     return <p className="text-center mt-6 text-red-600">Error: {error}</p>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-8 mt-24">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          All Job Openings
+          Your Created Jobs
         </h2>
         {jobs.length === 0 ? (
           <p className="text-center text-gray-600">No jobs available.</p>
