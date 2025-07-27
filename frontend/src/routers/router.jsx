@@ -8,7 +8,6 @@ import Contact from "../pages/Contact/Contact";
 import Features from "../pages/Features/Features";
 // import Practice from "../pages/Practice/Practice";
 import Landing from "../pages/Landing/Landing";
-import SkillCheckHomepage from "../pages/SkillCheckHomepage/SkillCheckHomepage";
 import PracticePage from "../pages/Interview_Practice/PracticePage";
 import Singup2 from "../pages/Signup2/Singup2";
 import Login2 from "../pages/Login2/Login2";
@@ -19,6 +18,7 @@ import StudentDashboard from "../pages/Student/StudentDashboard";
 import NotFound from "../pages/Student/NotFound";
 import ProtectedRoute from "../components/Protected/ProtectedRoute";
 import SeeJobs from "../pages/HR/SeeJobs";
+import ExploreJobsPage from "../pages/Student/ExploreJobsPage";
 
 const router = createBrowserRouter([
   {
@@ -53,10 +53,7 @@ const router = createBrowserRouter([
         path: "/",
         element: <Landing />,
       },
-      {
-        path: "/home",
-        element: <SkillCheckHomepage />,
-      },
+     
       {
         path: "/profile-completion",
         element: <ProfileCompletion />,
@@ -78,6 +75,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles="student">
             <StudentDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/explore-jobs",
+        element: (
+          <ProtectedRoute allowedRoles="student">
+            <ExploreJobsPage />
           </ProtectedRoute>
         ),
       },

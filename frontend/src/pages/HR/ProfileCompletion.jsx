@@ -4,6 +4,8 @@ import Swal from "sweetalert2";
 
 const ProfileCompletion = ({ onSubmit }) => {
   const token = localStorage.getItem("authToken");
+  const email = localStorage.getItem("userEmail");
+  const cacheKey = email ? `hrProfile_${email}` : null;
 
   const [formData, setFormData] = useState({
     mobile_number: "",
@@ -13,30 +15,59 @@ const ProfileCompletion = ({ onSubmit }) => {
     company_email: "",
     company_location: "",
     designation: "",
-    logo: null, // Optional: only if your model/serializer accepts it
+    logo: null,
   });
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!cacheKey || !token) return;
+
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith("hrProfile_") && key !== cacheKey) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      const cached = localStorage.getItem(cacheKey);
+
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        const isExpired = Date.now() - parsed.timestamp > 10 * 60 * 1000;
+
+        if (!isExpired && parsed.email === email) {
+          setFormData({ ...parsed.data, logo: null });
+          setLoading(false);
+          return;
+        }
+      }
+
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/hr/hr-profiles/`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setFormData({
-          ...res.data,
-          logo: null, // keep logo field empty on load
-        });
-      } catch (error) {
-        console.error("Failed to fetch profile:", error);
+
+        const dataToStore = {
+          data: res.data,
+          timestamp: Date.now(),
+          email: email,
+        };
+
+        localStorage.setItem(cacheKey, JSON.stringify(dataToStore));
+        setFormData({ ...res.data, logo: null });
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchProfile();
-  }, []);
+  }, [cacheKey, token, email]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,19 +90,28 @@ const ProfileCompletion = ({ onSubmit }) => {
         }
       );
 
+      const newDataToCache = {
+        data: res.data,
+        timestamp: Date.now(),
+        email: email,
+      };
+
+      localStorage.setItem(cacheKey, JSON.stringify(newDataToCache));
+
       Swal.fire({
         icon: "success",
         title: "Success!",
         text: "Profile updated successfully",
       });
+
       if (onSubmit) onSubmit(res.data);
-    } catch (error) {
-      console.error("Submission Error:", error);
+    } catch (err) {
+      console.error("Submission Error:", err);
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text:
-          error.response?.data?.message ||
+          err.response?.data?.message ||
           "Something went wrong. Please try again.",
       });
     }
@@ -79,15 +119,29 @@ const ProfileCompletion = ({ onSubmit }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh] bg-white">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* HR Profile Fields */}
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white shadow-md rounded-xl p-8 space-y-8 mt-8 max-w-4xl mx-auto"
+    >
+      <h2 className="text-2xl font-bold text-gray-800 text-center">
+        Complete Your Profile
+      </h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-semibold mb-1 text-gray-700">
+          <label className="text-sm font-semibold text-gray-700 mb-1 block">
             Mobile Number *
           </label>
           <input
@@ -96,12 +150,12 @@ const ProfileCompletion = ({ onSubmit }) => {
             value={formData.mobile_number || ""}
             onChange={handleInputChange}
             required
-            className="border rounded px-3 py-2 text-sm w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-gray-700">
+          <label className="text-sm font-semibold text-gray-700 mb-1 block">
             Gender *
           </label>
           <select
@@ -109,7 +163,7 @@ const ProfileCompletion = ({ onSubmit }) => {
             value={formData.gender || ""}
             onChange={handleInputChange}
             required
-            className="border rounded px-3 py-2 text-sm w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
           >
             <option value="">Select</option>
             <option value="Male">Male</option>
@@ -119,7 +173,7 @@ const ProfileCompletion = ({ onSubmit }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-gray-700">
+          <label className="text-sm font-semibold text-gray-700 mb-1 block">
             LinkedIn Profile (optional)
           </label>
           <input
@@ -127,12 +181,12 @@ const ProfileCompletion = ({ onSubmit }) => {
             name="linkedin_profile"
             value={formData.linkedin_profile || ""}
             onChange={handleInputChange}
-            className="border rounded px-3 py-2 text-sm w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-gray-700">
+          <label className="text-sm font-semibold text-gray-700 mb-1 block">
             Company Name *
           </label>
           <input
@@ -141,12 +195,12 @@ const ProfileCompletion = ({ onSubmit }) => {
             value={formData.company_name || ""}
             onChange={handleInputChange}
             required
-            className="border rounded px-3 py-2 text-sm w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-gray-700">
+          <label className="text-sm font-semibold text-gray-700 mb-1 block">
             Company Email *
           </label>
           <input
@@ -155,12 +209,12 @@ const ProfileCompletion = ({ onSubmit }) => {
             value={formData.company_email || ""}
             onChange={handleInputChange}
             required
-            className="border rounded px-3 py-2 text-sm w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-gray-700">
+          <label className="text-sm font-semibold text-gray-700 mb-1 block">
             Company Location *
           </label>
           <input
@@ -169,12 +223,12 @@ const ProfileCompletion = ({ onSubmit }) => {
             value={formData.company_location || ""}
             onChange={handleInputChange}
             required
-            className="border rounded px-3 py-2 text-sm w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-gray-700">
+          <label className="text-sm font-semibold text-gray-700 mb-1 block">
             Designation *
           </label>
           <input
@@ -183,13 +237,13 @@ const ProfileCompletion = ({ onSubmit }) => {
             value={formData.designation || ""}
             onChange={handleInputChange}
             required
-            className="border rounded px-3 py-2 text-sm w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold mb-1 text-gray-700">
-            Company Logo (Optional)
+          <label className="text-sm font-semibold text-gray-700 mb-1 block">
+            Company Logo (optional)
           </label>
           <input
             type="file"
@@ -198,15 +252,15 @@ const ProfileCompletion = ({ onSubmit }) => {
               setFormData({ ...formData, logo: e.target.files[0] })
             }
             accept=".png,.jpg,.jpeg"
-            className="border rounded px-3 py-2 text-sm w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm"
           />
         </div>
       </div>
 
-      <div className="flex justify-end pt-4">
+      <div className="flex justify-end pt-6">
         <button
           type="submit"
-          className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
         >
           Save Profile
         </button>

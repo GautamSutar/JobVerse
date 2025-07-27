@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const HrNav = () => {
   return (
-    <nav className="bg-blue-600 text-white p-4 shadow-md">
+    <nav className="text-white p-4 shadow-md">
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         <div className="text-xl font-bold">HR Portal</div>
         <div className="space-x-4">

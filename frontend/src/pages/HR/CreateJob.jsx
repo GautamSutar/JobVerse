@@ -22,9 +22,9 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
 
   const navigateBack = () => {
     if (onClose) {
-      onClose(); // close modal
+      onClose();
     } else {
-      window.location.href = "/hr-dashboard"; 
+      window.location.href = "/hr-dashboard";
     }
   };
 
@@ -108,8 +108,8 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg text-lg font-medium text-gray-700">
           Loading job details...
         </div>
       </div>
@@ -118,26 +118,24 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+      className="fixed inset-0 flex items-center justify-center bg-black/5 z-50"
       onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          navigateBack();
-        }
+        if (e.target === e.currentTarget) navigateBack();
       }}
     >
       <div
-        className="bg-white p-8 rounded-xl shadow-xl w-full max-w-2xl relative transition-all duration-300"
+        className="bg-white p-8 rounded-xl shadow-xl w-full max-w-3xl relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
+        {/* Close Icon */}
         <button
           onClick={navigateBack}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition"
         >
           <FiX size={24} />
         </button>
 
-        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">
+        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           {isEdit ? "Edit Job" : "Create New Job"}
         </h2>
 
@@ -148,11 +146,11 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
         )}
 
         <form
-          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
           onSubmit={handleSubmit}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
         >
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Title *
             </label>
             <input
@@ -161,12 +159,12 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
               value={jobData.title}
               onChange={handleInputChange}
               required
-              className="mt-1 w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Domain *
             </label>
             <input
@@ -175,12 +173,12 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
               value={jobData.domain}
               onChange={handleInputChange}
               required
-              className="mt-1 w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Skills Required
             </label>
             <input
@@ -189,12 +187,12 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
               value={jobData.skills_required}
               onChange={handleInputChange}
               placeholder="Comma-separated skills"
-              className="mt-1 w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
             />
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Description *
             </label>
             <textarea
@@ -203,12 +201,12 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
               onChange={handleInputChange}
               required
               rows={4}
-              className="mt-1 w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               Start Date *
             </label>
             <input
@@ -217,12 +215,12 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
               value={jobData.start_date}
               onChange={handleInputChange}
               required
-              className="mt-1 w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
               End Date *
             </label>
             <input
@@ -231,21 +229,21 @@ const CreateJob = ({ onSubmit, onClose, jobId, initialData, isEdit }) => {
               value={jobData.end_date}
               onChange={handleInputChange}
               required
-              className="mt-1 w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400"
             />
           </div>
 
-          <div className="sm:col-span-2 flex justify-end gap-3 mt-6">
+          <div className="sm:col-span-2 flex justify-end gap-3 pt-4">
             <button
               type="button"
               onClick={navigateBack}
-              className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition"
+              className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-600 transition"
+              className="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition"
             >
               {isEdit ? "Update Job" : "Post Job"}
             </button>

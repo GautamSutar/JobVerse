@@ -3,7 +3,6 @@ import axios from "axios";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import Swal from "sweetalert2";
 import CreateJob from "./CreateJob";
-import { resolveElements } from "framer-motion";
 
 const SeeJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -12,45 +11,47 @@ const SeeJobs = () => {
   const [editingJob, setEditingJob] = useState(null);
 
   const token = localStorage.getItem("authToken");
-  const role = localStorage.getItem("userRole");
   const email = localStorage.getItem("userEmail");
-  console.log(email);
-  console.log(role);
+  const role = localStorage.getItem("userRole");
   const cacheKey = email ? `hrJobs_${email}` : null;
 
   useEffect(() => {
-    if (!email || !cacheKey || !token) {
-      console.warn("Missing email/token/cacheKey → skipping job fetch");
-      return;
-    }
-
     const loadJobs = async () => {
+      if (!token || !email || !cacheKey) return;
+
+      // Clear old HR user's cached jobs
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith("hrJobs_") && key !== cacheKey) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      // Check cache
       const cached = localStorage.getItem(cacheKey);
-      let isExpired = true;
       let parsed = null;
+      let isExpired = true;
 
       if (cached) {
         try {
           parsed = JSON.parse(cached);
           isExpired = Date.now() - parsed.timestamp > 5 * 60 * 1000;
+
           if (parsed.email !== email) {
-            console.log("❌ Email mismatch. Clearing old HR cache.");
+            console.warn("Cache email mismatch. Clearing it.");
             localStorage.removeItem(cacheKey);
             parsed = null;
-            isExpired = true;
           }
         } catch (err) {
-          console.error("Failed to parse cached data", err);
+          console.error("Failed to parse cache:", err);
         }
       }
+
       if (parsed && !isExpired) {
-        console.log("✅ Loaded fresh cache for HR:", email);
-        setJobs(parsed.data || [])
+        setJobs(parsed.data || []);
         setLoading(false);
-      }
-      else {
+      } else {
         try {
-          const response = await axios.get(
+          const res = await axios.get(
             `${
               import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
             }/job/list-all-jobs`,
@@ -60,17 +61,17 @@ const SeeJobs = () => {
               },
             }
           );
-          setJobs(response.data);
+          setJobs(res.data);
           localStorage.setItem(
             cacheKey,
             JSON.stringify({
-              data: response.data,
+              data: res.data,
               timestamp: Date.now(),
-              email: email
+              email: email,
             })
-          )
+          );
         } catch (err) {
-          console.error("❌ Failed to fetch jobs", err);
+          console.error("Failed to fetch jobs:", err);
           setError("Failed to fetch jobs");
         } finally {
           setLoading(false);
@@ -79,8 +80,9 @@ const SeeJobs = () => {
     };
 
     loadJobs();
-  }, [email, cacheKey, token]);
+  }, [email, token, cacheKey]);
 
+  // DELETE Job
   const handleDelete = async (jobId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -107,7 +109,11 @@ const SeeJobs = () => {
           setJobs(updatedJobs);
           localStorage.setItem(
             cacheKey,
-            JSON.stringify({ data: updatedJobs, timestamp: Date.now() })
+            JSON.stringify({
+              data: updatedJobs,
+              timestamp: Date.now(),
+              email: email,
+            })
           );
           Swal.fire("Deleted!", "The job has been deleted.", "success");
         } catch (err) {
@@ -131,65 +137,83 @@ const SeeJobs = () => {
     setJobs(updatedJobs);
     localStorage.setItem(
       cacheKey,
-      JSON.stringify({ data: updatedJobs, timestamp: Date.now() })
+      JSON.stringify({
+        data: updatedJobs,
+        timestamp: Date.now(),
+        email: email,
+      })
     );
     setEditingJob(null);
   };
 
-  if (loading) return <p className="text-center mt-6">Loading jobs...</p>;
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-500 border-t-transparent"></div>
+      </div>
+    );
+
   if (error)
-    return <p className="text-center mt-6 text-red-600">Error: {error}</p>;
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-red-600">Error: {error}</p>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 mt-24">
-      <div className="max-w-5xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+    <div className="min-h-screen bg-gray-50 p-8 mt-20">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
           Your Created Jobs
         </h2>
         {jobs.length === 0 ? (
-          <p className="text-center text-gray-600">No jobs available.</p>
+          <div className="text-center py-12">
+            <p className="text-lg text-gray-600">You haven't posted any jobs yet.</p>
+            <p className="text-sm text-gray-500 mt-2">Create a new job to get started.</p>
+          </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="flex justify-between items-center bg-white rounded-xl shadow-md hover:shadow-lg transition p-5"
+                className="bg-white shadow-lg rounded-xl p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
               >
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {job.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-2">
-                    {job.domain} • Posted on{" "}
-                    {new Date(job.created_at).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>Skills:</strong>{" "}
-                    {job.skills_required || "Not specified"}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>Duration:</strong> {job.start_date} - {job.end_date}
-                  </p>
-                  <p className="text-sm text-gray-700 mt-2 line-clamp-2">
-                    {job.description}
-                  </p>
-                </div>
-                {role === "hr" && (
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => handleEditClick(job)}
-                      className="text-yellow-500 hover:text-yellow-600"
-                    >
-                      <FiEdit size={20} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(job.id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <FiTrash2 size={20} />
-                    </button>
+                <div className="flex flex-col sm:flex-row justify-between items-start">
+                  <div className="flex-grow">
+                    <h3 className="text-2xl font-semibold text-gray-900">
+                      {job.title}
+                    </h3>
+                    <p className="text-indigo-600 font-medium text-sm mb-1">{job.domain}</p>
+                    <p className="text-xs text-gray-500 mb-3">
+                      Posted on {new Date(job.created_at).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                      {job.description}
+                    </p>
+                    <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-700">
+                      <p className="flex items-center"><span className="mr-2">🛠</span> Skills: {job.skills_required || "Not specified"}</p>
+                      <p className="flex items-center"><span className="mr-2">⏳</span> Duration: {job.start_date} to {job.end_date}</p>
+                    </div>
                   </div>
-                )}
+                  {role === "hr" && (
+                    <div className="flex items-center gap-4 mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
+                      <button
+                        onClick={() => handleEditClick(job)}
+                        className="flex items-center justify-center p-3 rounded-full bg-yellow-100 text-yellow-600 hover:bg-yellow-200 transition-colors"
+                        aria-label="Edit job"
+                      >
+                        <FiEdit size={20} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(job.id)}
+                        className="flex items-center justify-center p-3 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                        aria-label="Delete job"
+                      >
+                        <FiTrash2 size={20} />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
           </div>

@@ -18,12 +18,22 @@ class CreateJobView(APIView):
                 data={'message': 'Successfully Job Serializer Saved', 'data': serializer.data},status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-class ListAllJobs(ListAPIView):
+class ListAllJobsCreatedByHR(ListAPIView):
    permission_classes = [permissions.IsAuthenticated]
    serializer_class = JobSerializer
    def get_queryset(self):
     user = self.request.user
     return Job.objects.filter(hr=user) if user.role == 'hr' else Job.objects.none()
+   
+class ListAllJobsForStudent(ListAPIView):
+   permission_classes = [permissions.IsAuthenticated]
+   serializer_class = JobSerializer
+   def get_queryset(self):
+    user = self.request.user
+    if user.role == 'student':
+        return Job.objects.all()
+    else:
+        return Job.objects.none()
 
 class RetrieveJobByIdView(RetrieveAPIView):
     queryset = Job.objects.all()

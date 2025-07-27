@@ -12,18 +12,18 @@ class ApplyToJob(APIView):
     def post(self, request, id):
         # job_id = request.data.get('job_id')
         job = get_object_or_404(Job, id=id)
-        student = request.user.role
+        student = request.user
         email = request.user.email
         first_name = request.user.first_name  
         last_name = request.user.last_name
-        if student != 'student':
+        if student.role != 'student':
             return Response({"error": "Only students can apply."}, status=status.HTTP_403_FORBIDDEN)
         resume = request.FILES.get('resume_file')
         if not resume:
             return Response({"error": "Resume is required."}, status=status.HTTP_400_BAD_REQUEST)
         score = calculate_resume_score(resume, job.description, job.skills_required)
         print(score)
-        if score >= 80:
+        if score <= 80:
             JobApplications.objects.create(
                 job=job,
                 student=student,
