@@ -1,11 +1,14 @@
-from rest_framework import permissions, status
+from rest_framework import permissions, status, viewsets
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from apps.jobs.job_serializer import JobSerializer
 from apps.jobs.models.jobsModel import Job
-
+from apps.jobs.permissions import IsHROwnerOrReadOnly
+from rest_framework.decorators import action
+from apps.job_applications.models.jobApplicationModel import JobApplications
+from apps.job_applications.serializers import JobApplicationViewSerializer
 class CreateJobView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
@@ -70,5 +73,23 @@ class DeleteJobView(DestroyAPIView):
         job_title = instance.title,
         instance.delete()
         return Response({'message':f'Job {job_title} deleted successfully'},status=status.HTTP_200_OK)
+    
+
+class JobViewSet(viewsets.ModelViewSet):
+    serializer_class = JobSerializer
+    permission_classes = [permissions.IsAuthenticated, IsHROwnerOrReadOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'hr':
+            return Job.objects.filter(hr=user)
+        return Job.objects.all()
+
+    @action(detail=True, methods=['get'], url_path='applicants')
+    def list_applicants(self, request, pk=None):
+        job = self.get_object()
+        applicants = JobApplications.objects.filter(job=job).select_related('student')
+        serializer = JobApplicationViewSerializer(applicants, many=True)
+        return Response(serializer.data)
     
     

@@ -18,4 +18,5 @@ urlpatterns = [
     path('api/job/', include('apps.jobs.urls')),
     path('api/job-applications/', include('apps.job_applications.urls')),
     path('api/', include('apps.audioapp.urls')),
+    path('api/interview/', include('apps.interviewSchedule.urls')),
 ]

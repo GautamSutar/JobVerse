@@ -12,8 +12,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # or your provider
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'travelmitra.in@gmail.com'
-EMAIL_HOST_PASSWORD = 'dyrb uesg kcon yxdi'
+EMAIL_HOST_USER = 'exoic.jobverse.in@gmail.com'
+EMAIL_HOST_PASSWORD = 'mxxz tkga hwhs baiy'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
   
@@ -53,8 +53,8 @@ INSTALLED_APPS = [
     'apps.hr.apps.HrConfig',
     'apps.job_applications.apps.JobApplicationsConfig',
     'apps.jobs.apps.JobsConfig',
-    "apps.scheduleInterviews.apps.ScheduleinterviewsConfig",
-    "apps.audioapp.apps.AudioappConfig"
+    "apps.audioapp.apps.AudioappConfig",
+    "apps.interviewSchedule.apps.InterviewscheduleConfig"
 ]
 
 #  Middleware

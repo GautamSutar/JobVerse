@@ -1,58 +1,79 @@
 import re
-import fitz  # PyMuPDF
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from sentence_transformers import SentenceTransformer, util
-import spacy
-
-nlp = spacy.load("en_core_web_sm")
-model = SentenceTransformer("all-MiniLM-L6-v2")
-
+import fitz
+import os
+from dotenv import load_dotenv
+from fuzzywuzzy import fuzz
+import openai
+load_dotenv()
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 def extract_text_from_pdf(file):
-    with fitz.open(stream=file.read(), filetype='pdf' ) as doc:
+    with fitz.open(stream=file.read(), filetype='pdf') as doc:
         return " ".join(page.get_text() for page in doc)
+def get_groq_match_score(job_data, resume_text):
+    try:
+        client = openai.OpenAI(
+            api_key=GROQ_API_KEY,
+            base_url="https://api.groq.com/openai/v1"
+        )
 
-def clean_text(text):
-    lemmatizer = WordNetLemmatizer()
-    stop_words = set(stopwords.words("english"))
-    text = re.sub(r"[^\w\s]", "", text.lower())
-    tokens = [lemmatizer.lemmatize(word) for word in text.split() if word not in stop_words]
-    return " ".join(tokens)
+        prompt = f"""
+        You are an expert resume evaluator.
 
-def keyword_match_score(resume, jd_keywords):
-    resume_words = set(resume.split())
-    jd_words = set(jd_keywords.split())
-    return len(resume_words & jd_words) / len(jd_words) * 100 if jd_words else 0
+        Task:
+        Compare the candidate's resume with the job description provided below.
+        - Provide a match score (0-100)
+        - List matched and missing skills
+        - Justify the score in 1-2 sentences
 
-def tfidf_score(resume, jd):
-    vectorizer = TfidfVectorizer()
-    vectors = vectorizer.fit_transform([resume, jd])
-    return cosine_similarity(vectors[0:1], vectors[1:2])[0][0] * 100
+        JOB DETAILS:
+        Title: {job_data.get("title", "")}
+        Category: {job_data.get("category", "")}
+        Type: {job_data.get("job_type", "")}
+        Time Commitment: {job_data.get("time_commitment", "")}
+        Description: {job_data.get("description", "")}
+        Responsibilities: {job_data.get("responsibilities", "")}
+        Skills Required: {job_data.get("skills_required", "")}
+        Who Can Apply: {job_data.get("who_can_apply", "")}
+        Graduation Years: {job_data.get("graduation_years", "")}
+        Degrees/Streams: {job_data.get("degrees_or_streams", "")}
+        Experience Level: {job_data.get("experience_level", "")}
+        Company: {job_data.get("company_name", "")}
+        About Company: {job_data.get("about_company", "")}
 
-def ner_skill_match_score(resume, jd):
-    doc_resume = nlp(resume)
-    doc_jd = nlp(jd)
-    resume_ents = set(ent.text.lower() for ent in doc_resume.ents if ent.label_ in ["ORG", "SKILL", "PRODUCT"])
-    jd_ents = set(ent.text.lower() for ent in doc_jd.ents if ent.label_ in ["ORG", "SKILL", "PRODUCT"])
-    return len(resume_ents & jd_ents) / len(jd_ents) * 100 if jd_ents else 0
+        RESUME TEXT:
+        {resume_text}
 
-def embedding_score(resume, jd):
-    embeddings = model.encode([resume, jd])
-    return util.cos_sim(embeddings[0], embeddings[1]).item() * 100
+        Respond strictly in JSON format like:
+        {{
+          "score": <number between 0-100>,
+          "matched_skills": ["skill1", "skill2"],
+          "missing_skills": ["skillA", "skillB"],
+          "reason": "..."
+        }}
+        """
 
-def calculate_resume_score(resume_file, job_description, job_skills):
-    raw_resume = extract_text_from_pdf(resume_file)
-    resume = clean_text(raw_resume)
-    jd = clean_text(job_description)
-    skills = clean_text(job_skills)
+        response = client.chat.completions.create(
+            model="llama3-70b-8192",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3
+        )
 
-    score = (
-        0.25 * keyword_match_score(resume, skills) +
-        0.30 * tfidf_score(resume, jd) +
-        0.20 * ner_skill_match_score(resume, jd) +
-        0.25 * embedding_score(resume, jd)
-    )
-    return round(score, 2)
+        text = response.choices[0].message.content.strip()
+        match = re.search(r"\{.*\}", text, re.DOTALL)
+        return eval(match.group()) if match else {"score": 0, "reason": "Invalid response"}
 
+    except Exception as e:
+        print("Groq API Error:", str(e))
+        return {"score": 0, "reason": "Groq API error"}
+def calculate_resume_skill_score(resume_file, job_data: dict, use_groq=False):
+    resume_text = extract_text_from_pdf(resume_file)
+
+    if use_groq and GROQ_API_KEY:
+        return get_groq_match_score(job_data, resume_text)
+
+    return {
+        "score": 0,
+        "reason": "Groq not used. Set use_groq=True to enable smart matching."
+    }

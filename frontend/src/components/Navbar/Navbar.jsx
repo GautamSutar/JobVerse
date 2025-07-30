@@ -184,7 +184,7 @@ const AuthButtons = ({ auth, handleLogout }) => {
       <div className="relative">
         <button
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          className="flex items-center space-x-2 p-2 rounded-full hover:bg-gray-100"
+          className="flex items-center space-x-2 p-2 rounded-full cursor-pointer hover:bg-gray-100"
         >
           <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
             {auth.firstName ? (
@@ -208,17 +208,17 @@ const AuthButtons = ({ auth, handleLogout }) => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 z-50 border"
+              className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-1 z-50 cursor-pointer border"
             >
               <button
                 onClick={handleDashboardClick}
-                className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-100"
               >
                 <FiGrid className="mr-2" /> Dashboard
               </button>
               <button
                 onClick={handleLogout}
-                className="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                className="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 cursor-pointer hover:bg-red-50"
               >
                 <FiLogOut className="mr-2" /> Logout
               </button>

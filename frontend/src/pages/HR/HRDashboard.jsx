@@ -260,7 +260,7 @@ const DashboardHeader = ({ onOpenCreateJob }) => (
 
 const QuickActions = ({ onOpenProfileModal }) => {
   const actions = [
-    { icon: FiUsers, title: "View Candidates", path: "/view-candidates" },
+    { icon: FiUsers, title: "View Candidates", path: "/job-applicants" },
     { icon: FiFileText, title: "Generate Report", path: "/generate-report" },
     { icon: FiEye, title: "See All Jobs", path: "/see-job" },
     { icon: FiEdit, title: "Update Profile", action: onOpenProfileModal },

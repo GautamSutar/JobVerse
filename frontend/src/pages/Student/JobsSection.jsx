@@ -77,7 +77,7 @@ export const JobsSection = () => {
 
   return (
     <SectionCard title="Start Your Journey" icon={FiBriefcase}>
-      <p className="text-sm text-gray-600 mb-6">
+      <p className="text-sm cursor-pointer text-gray-600 mb-6">
         Discover opportunities and events tailored for you. What would you like
         to explore today?
       </p>

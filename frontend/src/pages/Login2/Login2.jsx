@@ -58,7 +58,7 @@ export default function LoginForm() {
       // Corrected keys to match your signup form for consistency
       localStorage.setItem("first_name", first_name);
       localStorage.setItem("last_name", last_name);
-
+      console.log(accessToken)
       toast.success("Login successful! Redirecting...", {
         position: "top-right",
         autoClose: 2000,
@@ -181,7 +181,7 @@ export default function LoginForm() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-md transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                className="w-full bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-md transition-all transform hover:scale-105 flex items-center justify-center gap-2"
               >
                 <FiLogIn />
                 Login

@@ -19,6 +19,7 @@ import NotFound from "../pages/Student/NotFound";
 import ProtectedRoute from "../components/Protected/ProtectedRoute";
 import SeeJobs from "../pages/HR/SeeJobs";
 import ExploreJobsPage from "../pages/Student/ExploreJobsPage";
+import JobApplicants from "../pages/HR/JobApplicants";
 
 const router = createBrowserRouter([
   {
@@ -53,7 +54,7 @@ const router = createBrowserRouter([
         path: "/",
         element: <Landing />,
       },
-     
+
       {
         path: "/profile-completion",
         element: <ProfileCompletion />,
@@ -95,6 +96,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles="hr">
             <SeeJobs />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/job-applicants",
+        element: (
+          <ProtectedRoute allowedRoles="hr">
+            <JobApplicants />
           </ProtectedRoute>
         ),
       },
