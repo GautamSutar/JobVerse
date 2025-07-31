@@ -14,6 +14,9 @@ class ScheduleInterviewAPIView(APIView):
             },
             status=status.HTTP_403_FORBIDDEN
             )
+        print("--- RAW DATA RECEIVED FROM FRONTEND ---")
+        print(request.data)
+        print("---------------------------------------")
         serializer = ScheduleInterviewCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

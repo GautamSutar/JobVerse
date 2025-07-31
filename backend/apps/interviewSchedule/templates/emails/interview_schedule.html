@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Invitation</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; background-color: #f4f4f7;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; border: 1px solid #dddddd;">
+        <tr>
+            <td align="center" bgcolor="#111827" style="padding: 20px 0 20px 0;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">{{ company_name }}</h1>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="color: #111827; font-size: 22px; font-weight: bold;">
+                            Interview Invitation: {{ job_title }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 20px 0 30px 0; color: #374151; font-size: 16px; line-height: 24px;">
+                            <p style="margin: 0;">Hi {{ student_name }},</p>
+                            <p style="margin-top: 15px;">My name is {{ hr_name }}, and I'm from {{ company_name }}.</p>
+                            <p style="margin-top: 15px;">Congratulations! After reviewing your application for the {{ job_title }} position, we are pleased to invite you to the next round: an AI-powered interview.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; border-left: 4px solid #4F46E5; padding: 20px;">
+                                <tr>
+                                    <td>
+                                        <p style="margin: 0; font-size: 18px; font-weight: bold; color: #111827;">Interview Details</p>
+                                        <p style="margin: 15px 0 0 0;"><strong>Time:</strong><br/> {{ scheduled_time_formatted }}</p>
+                                        <p style="margin: 15px 0 0 0;"><strong>Your Unique Interview Link:</strong></p>
+                                        <p style="margin: 10px 0 0 0;"><a href="{{ interview_link }}" style="color: #4F46E5; text-decoration: underline;">{{ interview_link }}</a></p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: 30px;">
+                             <h3 style="color: #be123c; font-size: 18px; font-weight: bold; margin:0;">--- VERY IMPORTANT: INTERVIEW RULES ---</h3>
+                            <ol style="color: #374151; font-size: 15px; line-height: 22px; padding-left: 20px;">
+                                <li style="margin-bottom: 10px;"><strong>Camera is Mandatory:</strong> Your camera must be turned on and remain active throughout the entire interview. This is a very strict requirement.</li>
+                                <li style="margin-bottom: 10px;"><strong>No Cheating:</strong> Do not switch browser tabs, use your phone, or receive assistance from others. Our system monitors for such activity.</li>
+                                <li><strong>Disqualification:</strong> Any violation of these rules will result in your immediate disqualification from the hiring process.</li>
+                            </ol>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: 20px; color: #374151; font-size: 16px;">
+                            We wish you the very best of luck!<br/><br/>
+                            Sincerely,<br/>
+                            {{ hr_name }}<br/>
+                            {{ company_name }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+         <tr>
+            <td bgcolor="#f9fafb" style="padding: 20px 30px 20px 30px; text-align: center; color: #6b7280; font-size: 12px;">
+                If you have any questions, please contact our hiring team directly.
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

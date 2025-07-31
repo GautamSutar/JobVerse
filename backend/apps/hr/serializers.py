@@ -50,3 +50,10 @@ class HRProfileSerializer(serializers.ModelSerializer):
             user.save()
 
         return instance
+
+
+class HRDetailSerializer(serializers.ModelSerializer):
+    hr_profile = HRProfileSerializer(read_only=True)
+    class Meta:
+        model = CustomUser
+        fields = ['hr_profile']

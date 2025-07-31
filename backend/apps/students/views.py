@@ -219,3 +219,6 @@ class AchievementListView(generics.ListAPIView):
 class AchievementUpdateView(BaseUpdateView):
     serializer_class = AchievementSerializer
     model = Achievement
+
+
+

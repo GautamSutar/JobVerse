@@ -3,6 +3,7 @@ from apps.students.models import (
     StudentProfile, Certificate, Transcript, Internship,
     Project, SkillPreference, Achievement
 )
+from apps.users.models import CustomUser
 from apps.users.serializers import CustomUserInfoSerializer
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = CustomUserInfoSerializer(read_only=False)
@@ -135,3 +136,10 @@ class AchievementSerializer(serializers.ModelSerializer):
             'description': {'required': False, 'allow_blank': True},
             'type': {'required': False, 'allow_blank': True},
         }
+
+
+class StudentDetailSerializer(serializers.ModelSerializer):
+    student_profile = StudentProfileSerializer(read_only=True)
+    class Meta:
+        model = CustomUser
+        fields = ['student_profile']

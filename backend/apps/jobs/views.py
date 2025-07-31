@@ -9,6 +9,7 @@ from apps.jobs.permissions import IsHROwnerOrReadOnly
 from rest_framework.decorators import action
 from apps.job_applications.models.jobApplicationModel import JobApplications
 from apps.job_applications.serializers import JobApplicationViewSerializer
+from apps.job_applications.serializers import ApplicantDetailViewSerializer
 class CreateJobView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
@@ -20,7 +21,11 @@ class CreateJobView(APIView):
             return Response(
                 data={'message': 'Successfully Job Serializer Saved', 'data': serializer.data},status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+class ListAllJobs(ListAPIView):
+   queryset = Job.objects.all().order_by('-created_at')
+   serializer_class = JobSerializer
+   
 class ListAllJobsCreatedByHR(ListAPIView):
    permission_classes = [permissions.IsAuthenticated]
    serializer_class = JobSerializer
@@ -88,8 +93,46 @@ class JobViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='applicants')
     def list_applicants(self, request, pk=None):
         job = self.get_object()
-        applicants = JobApplications.objects.filter(job=job).select_related('student')
-        serializer = JobApplicationViewSerializer(applicants, many=True)
+        applicants = JobApplications.objects.filter(job=job).select_related(
+            'student__student_profile',
+             'job__hr__hr_profile'
+            ).prefetch_related(
+            'student__student_profile__projects',
+            'student__student_profile__internships'
+            # Add other prefetches if needed
+            )
+        serializer = ApplicantDetailViewSerializer(applicants, many=True,context={'request': request})
         return Response(serializer.data)
     
-    
+
+
+class AllApplicantsByHRView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        if request.user.role != 'hr':
+            return Response({"error": "Permission denied."}, status=status.HTTP_403_FORBIDDEN)
+
+        hr_jobs = Job.objects.filter(hr=request.user)
+        applications = JobApplications.objects.filter(job__in=hr_jobs).select_related(
+            'student__student_profile__user',
+            'job__hr__hr_profile__user'
+        )
+
+        jobs_serializer = JobSerializer(hr_jobs, many=True)
+        applicants_serializer = JobApplicationViewSerializer(applications, many=True, context={'request': request})
+
+        applicants_by_job = {}
+        for applicant_data in applicants_serializer.data:
+            job_id = applicant_data['job']['id']
+            if job_id not in applicants_by_job:
+                applicants_by_job[job_id] = []
+            applicants_by_job[job_id].append(applicant_data)
+
+        response_data = []
+        for job_data in jobs_serializer.data:
+            job_id = job_data['id']
+            job_data['applicants'] = applicants_by_job.get(job_id, [])
+            response_data.append(job_data)
+            
+        return Response(response_data)

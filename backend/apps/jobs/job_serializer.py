@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from apps.jobs.models.jobsModel import Job
-
+from apps.hr.serializers import HRDetailSerializer
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
@@ -36,3 +36,10 @@ class JobSerializer(serializers.ModelSerializer):
             'created_at',
         ]
         read_only_fields = ['hr', 'created_at']
+
+
+class JobDetailSerializer(serializers.ModelSerializer):
+    hr = HRDetailSerializer(read_only=True)
+    class Meta:
+        model = Job
+        fields = ['title', 'category','job_type','time_commitment','description','skills_required', 'created_at', 'hr']

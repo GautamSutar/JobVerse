@@ -19,7 +19,8 @@ import NotFound from "../pages/Student/NotFound";
 import ProtectedRoute from "../components/Protected/ProtectedRoute";
 import SeeJobs from "../pages/HR/SeeJobs";
 import ExploreJobsPage from "../pages/Student/ExploreJobsPage";
-import JobApplicants from "../pages/HR/JobApplicants";
+import JobsListPage from "../pages/HR/JobsListPage";
+import ApplicantsDetailPage from "../pages/HR/ApplicantsDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -100,13 +101,22 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/job-applicants",
+        path: "/job-list-page",
         element: (
           <ProtectedRoute allowedRoles="hr">
-            <JobApplicants />
+            <JobsListPage />
           </ProtectedRoute>
         ),
       },
+      {
+        path: "/job/:jobId/applicants",
+        element: (
+          <ProtectedRoute allowedRoles="hr">
+            <ApplicantsDetailPage />
+          </ProtectedRoute>
+        ),
+      },
+  
     ],
   },
 ]);

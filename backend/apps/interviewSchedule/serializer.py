@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from apps.interviewSchedule.models.interviewScheduleModel import ScheduleInterviewsModel
+from apps.job_applications.models.jobApplicationModel import JobApplications
 class ScheduleInterviewCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScheduleInterviewsModel
