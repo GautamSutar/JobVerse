@@ -19,6 +19,7 @@ import { ProfileSection } from "./ProfileSection";
 import { ResumeUploadSection } from "./ResumeUploadSection";
 import { ScoresSection } from "./ScoresSection";
 import { DashboardNav } from "./DashboardNav";
+import Notifications from "./Notifications";
 
 // Placeholder for the JobsSection
 const JobsSection = () => (
@@ -61,6 +62,10 @@ export default function StudentDashboard() {
             <p className="mt-1 text-md text-gray-600">
               Here's a snapshot of your job application progress.
             </p>
+          </div>
+
+          <div className="mt-4 md:mt-0">
+            <Notifications />
           </div>
           <div className="mt-4 md:mt-0">
             <button className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-indigo-700 transition-transform transform hover:scale-105">

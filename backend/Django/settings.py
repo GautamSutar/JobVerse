@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'apps.job_applications.apps.JobApplicationsConfig',
     'apps.jobs.apps.JobsConfig',
     "apps.audioapp.apps.AudioappConfig",
-    "apps.interviewSchedule.apps.InterviewscheduleConfig"
+    "apps.interviewSchedule.apps.InterviewscheduleConfig",
+    'channels',
 ]
 
 #  Middleware
@@ -68,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 
 #  CORS Settings (Allow frontend React app)
 CORS_ALLOWED_ORIGINS = [
@@ -133,7 +135,7 @@ SIMPLE_JWT = {
 
 #  WSGI Application
 WSGI_APPLICATION = 'Django.wsgi.application'
-
+ASGI_APPLICATION = 'Django.asgi.application'
 DATABASE_URL = config("DATABASE_URL", default=None) # Try to load NEON/PostgreSQL URL
 
 #  Database Configuration Using Neon and Fall Back to SQLite if not set
@@ -148,6 +150,29 @@ DATABASES = {
     }
 }
 
+REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379")
+
+CAHCHES = {
+    'default':{
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "SOCKET_CONNECT_TIMEOUT": 5,  
+            "SOCKET_TIMEOUT": 5,        
+        },
+    }
+}
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [REDIS_URL],
+        },
+    },
+}
 
 #  Authentication & Custom User Model
 AUTH_USER_MODEL = 'users.CustomUser'

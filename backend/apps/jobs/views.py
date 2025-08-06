@@ -10,6 +10,8 @@ from rest_framework.decorators import action
 from apps.job_applications.models.jobApplicationModel import JobApplications
 from apps.job_applications.serializers import JobApplicationViewSerializer
 from apps.job_applications.serializers import ApplicantDetailViewSerializer
+from channels.layers import get_channel_layer 
+from asgiref.sync import async_to_sync
 class CreateJobView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
@@ -17,7 +19,25 @@ class CreateJobView(APIView):
             return Response({"error": "Only Hr can Create the jobs"}, status=status.HTTP_403_FORBIDDEN)
         serializer = JobSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(hr=request.user)
+            job = serializer.save(hr=request.user)
+            # websocket broadcast
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "job_notifications",
+                {
+                    "type":"send_job_notification",
+                    "content": {
+                        "message": "New Job Posted",
+                        "job_id":job.id,
+                        "title":job.title,
+                        "category":job.category,
+                        "company": job.company_name,
+                        "location": job.location,
+                        "created_at": str(job.created_at),
+                    },
+                }
+            )
+
             return Response(
                 data={'message': 'Successfully Job Serializer Saved', 'data': serializer.data},status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
