@@ -62,6 +62,8 @@ pip install djangorestframework-simplejwt
 1) python ../../manage.py startapp interviews_ai - Create a Django app inside `backend/app/interviews_ai/` with necessary files (`models.py`, `views.py`, `urls.py`, etc.)  
 2) python manage.py makemigrations - Run this when new changes are made  
 3) python manage.py migrate - Apply database migrations  
+4) daphne Django.asgi:application --port 8001 ( Run server to connect websocket )
+
 
 ---
 

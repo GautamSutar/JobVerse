@@ -1,101 +1,124 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FaBell } from "react-icons/fa";
-import { FiBriefcase, FiCheckCircle } from "react-icons/fi"; // Added new icons
+import { FiBriefcase, FiCheckCircle } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import useNotificationSound from "../../hooks/useNotificationSound";
+import useNotificationWebSocket from "../../hooks/useNotificationWebSocket";
+import usePushNotifications from "../../hooks/usePushNotifications";
 
-const Notifications = () => {
+export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null); // Initialize with null
+  const dropdownRef = useRef();
   const navigate = useNavigate();
 
-  const role = localStorage.getItem("userRole");
-
-  // --- No changes to your core logic ---
+  usePushNotifications();
+  useNotificationSound();
   useEffect(() => {
-    if (role !== "student") return;
-
-    const socket = new WebSocket("ws://127.0.0.1:8001/ws/jobs/notifications/");
-
-    socket.onopen = () => console.log("✅ WebSocket connected");
-
-    socket.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        console.log("📨 New job received:", data);
-        setNotifications((prev) => [data, ...prev]);
-        setUnreadCount((prev) => prev + 1);
-      } catch (error) {
-        console.error("❌ Error parsing WebSocket message:", error);
+    const cached = JSON.parse(localStorage.getItem("notifications") || "[]");
+    setNotifications(cached);
+    setUnreadCount(cached.length);
+  }, []);
+  const handleIncoming = useCallback((data) => {
+    setNotifications((prev) => {
+      if (prev.some((n) => n.job_id === data.job_id)) {
+       
+        return prev;
       }
-    };
 
-    socket.onerror = (error) => console.error("❌ WebSocket error:", error);
-    socket.onclose = () => console.log("🔌 WebSocket disconnected");
+      const notification = {
+        job_id: data.job_id,
+        title: data.title,
+        company: data.company,
+        location: data.location,
+        created_at: data.created_at || new Date().toISOString(),
+      };
 
-    return () => socket.close();
-  }, [role]);
+      const updated = [notification, ...prev];
+      localStorage.setItem("notifications", JSON.stringify(updated));
+      return updated;
+    });
 
-  // --- No changes to your core logic ---
-  const handleClick = () => {
-    if (!dropdownOpen) {
-      setUnreadCount(0);
-    }
-    setDropdownOpen(!dropdownOpen);
-  };
+    setUnreadCount((c) => c + 1);
+  }, []);
 
-  // --- No changes to your core logic ---
-  const handleJobClick = (jobId) => {
-    navigate(`/job-details/${jobId}`);
-    setDropdownOpen(false);
-  };
+  // Attach websocket listener
+  useNotificationWebSocket(handleIncoming);
 
-  // --- No changes to your core logic ---
+  // Listen to external events to refresh notifications if needed
   useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+    const handler = () => {
+      const cached = JSON.parse(localStorage.getItem("notifications") || "[]");
+      setNotifications(cached);
+      setUnreadCount(cached.length);
+    };
+    window.addEventListener("notifications-updated", handler);
+    return () => window.removeEventListener("notifications-updated", handler);
+  }, []);
+
+  // Ask for browser notification permission once on mount
+  useEffect(() => {
+    if (
+      Notification.permission !== "granted" &&
+      Notification.permission !== "denied"
+    ) {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  // Close dropdown if click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleJobClick = (jobId) => {
+    navigate(`/job-details/${jobId}`);
+    setDropdownOpen(false);
+    setUnreadCount(0); // Mark read on click
+  };
+
+  const role = localStorage.getItem("userRole");
   if (role !== "student") return null;
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* --- Bell Icon & Badge --- */}
+      {/* Bell Icon */}
       <div
-        onClick={handleClick}
+        onClick={() => {
+          setUnreadCount(0);
+          setDropdownOpen((v) => !v);
+        }}
         className="relative cursor-pointer p-2 rounded-full hover:bg-gray-100 transition-colors duration-300"
       >
         <FaBell size={22} className="text-gray-600" />
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 block h-6 w-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold border-2 border-white animate-pulse">
+          <span className="absolute top-0 right-0 h-5 w-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold border-2 border-white animate-pulse">
             {unreadCount}
           </span>
         )}
       </div>
 
-      {/* --- Dropdown Panel with Animation --- */}
+      {/* Dropdown */}
       <div
-        className={`absolute right-0 mt-2 w-80 sm:w-96 bg-white shadow-xl rounded-lg border border-gray-200 overflow-hidden z-50 transition-all duration-200 ease-out transform
-          ${
-            dropdownOpen
-              ? "opacity-100 scale-100"
-              : "opacity-0 scale-95 pointer-events-none"
-          }`}
+        className={`absolute right-0 mt-2 w-80 sm:w-96 bg-white shadow-xl rounded-lg border border-gray-200 overflow-hidden z-50 transition-all duration-200 ease-out transform ${
+          dropdownOpen
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-95 pointer-events-none"
+        }`}
       >
-        {/* --- Dropdown Header --- */}
         <div className="flex items-center justify-between p-4 border-b bg-gray-50">
           <h3 className="font-semibold text-gray-800">Notifications</h3>
         </div>
 
-        {/* --- Notifications List --- */}
         <div className="max-h-96 overflow-y-auto">
-          {notifications.length > 0 ? (
+          {dropdownOpen && notifications.length > 0 ? (
             <ul>
               {notifications.map((job, index) => (
                 <li
@@ -111,14 +134,13 @@ const Notifications = () => {
                       {job.title}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {job.company} &middot; {job.location}
+                      {job.company} · {job.location}
                     </p>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            /* --- Empty State --- */
             <div className="flex flex-col items-center justify-center text-center p-8">
               <FiCheckCircle size={40} className="text-green-500 mb-3" />
               <h4 className="font-semibold text-gray-700">All Caught Up!</h4>
@@ -131,6 +153,4 @@ const Notifications = () => {
       </div>
     </div>
   );
-};
-
-export default Notifications;
+}

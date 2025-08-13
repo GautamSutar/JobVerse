@@ -52,7 +52,7 @@ const JobsSection = () => (
 export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-20">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div>
@@ -65,12 +65,14 @@ export default function StudentDashboard() {
           </div>
 
           <div className="mt-4 md:mt-0">
-            <Notifications />
-          </div>
-          <div className="mt-4 md:mt-0">
-            <button className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-indigo-700 transition-transform transform hover:scale-105">
-              Explore New Jobs
-            </button>
+            <div className="flex flex-row space-x-4">
+              <div className="mt-4 md:mt-0">
+                <Notifications />
+              </div>
+              <button className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-indigo-700 transition-transform transform hover:scale-105">
+                Explore New Jobs
+              </button>
+            </div>
           </div>
         </div>
 

@@ -10,27 +10,31 @@ from rest_framework.decorators import action
 from apps.job_applications.models.jobApplicationModel import JobApplications
 from apps.job_applications.serializers import JobApplicationViewSerializer
 from apps.job_applications.serializers import ApplicantDetailViewSerializer
+from apps.notifications.utils import send_push_notification_for_users
 from channels.layers import get_channel_layer 
 from asgiref.sync import async_to_sync
 class CreateJobView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
         if request.user.role != 'hr':
             return Response({"error": "Only Hr can Create the jobs"}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = JobSerializer(data=request.data)
         if serializer.is_valid():
             job = serializer.save(hr=request.user)
-            # websocket broadcast
+
+            # WebSocket broadcast
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 "job_notifications",
                 {
-                    "type":"send_job_notification",
+                    "type": "send_job_notification",
                     "content": {
                         "message": "New Job Posted",
-                        "job_id":job.id,
-                        "title":job.title,
-                        "category":job.category,
+                        "job_id": job.id,
+                        "title": job.title,
+                        "category": job.category,
                         "company": job.company_name,
                         "location": job.location,
                         "created_at": str(job.created_at),
@@ -38,8 +42,18 @@ class CreateJobView(APIView):
                 }
             )
 
+            
+            send_push_notification_for_users(
+                title="New Job Posted",
+                body=f"A new job has been posted: {job.title}",
+                url=f"http://localhost:5173/job-details/{job.id}" 
+            )
+
             return Response(
-                data={'message': 'Successfully Job Serializer Saved', 'data': serializer.data},status=status.HTTP_201_CREATED)
+                data={'message': 'Successfully Job Serializer Saved', 'data': serializer.data},
+                status=status.HTTP_201_CREATED
+            )
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ListAllJobs(ListAPIView):
