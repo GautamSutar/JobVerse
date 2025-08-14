@@ -25,29 +25,29 @@ class CreateJobView(APIView):
             job = serializer.save(hr=request.user)
 
             # WebSocket broadcast
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                "job_notifications",
-                {
-                    "type": "send_job_notification",
-                    "content": {
-                        "message": "New Job Posted",
-                        "job_id": job.id,
-                        "title": job.title,
-                        "category": job.category,
-                        "company": job.company_name,
-                        "location": job.location,
-                        "created_at": str(job.created_at),
-                    },
-                }
-            )
+            # channel_layer = get_channel_layer()
+            # async_to_sync(channel_layer.group_send)(
+            #     "job_notifications",
+            #     {
+            #         "type": "send_job_notification",
+            #         "content": {
+            #             "message": "New Job Posted",
+            #             "job_id": job.id,
+            #             "title": job.title,
+            #             "category": job.category,
+            #             "company": job.company_name,
+            #             "location": job.location,
+            #             "created_at": str(job.created_at),
+            #         },
+            #     }
+            # )
 
             
-            send_push_notification_for_users(
-                title="New Job Posted",
-                body=f"A new job has been posted: {job.title}",
-                url=f"http://localhost:5173/job-details/{job.id}" 
-            )
+            # send_push_notification_for_users(
+            #     title="New Job Posted",
+            #     body=f"A new job has been posted: {job.title}",
+            #     url=f"http://localhost:5173/job-details/{job.id}" 
+            # )
 
             return Response(
                 data={'message': 'Successfully Job Serializer Saved', 'data': serializer.data},
@@ -103,7 +103,7 @@ class DeleteJobView(DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         job = self.get_object()
         if request.user.role != 'hr':
-            return Response({"error": "Student can Delete job. You are not HR"}, status=status.HTTP_403_FORBIDDEN)
+            return Response({"error": "You can't Delete job. You are not HR"}, status=status.HTTP_403_FORBIDDEN)
         if request.user != job.hr:
             return Response({"error": "You can only delete your own job."}, status=status.HTTP_403_FORBIDDEN)
         return self.perform_destroy(job)
@@ -113,6 +113,25 @@ class DeleteJobView(DestroyAPIView):
         instance.delete()
         return Response({'message':f'Job {job_title} deleted successfully'},status=status.HTTP_200_OK)
     
+class DeleteAllJobView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def delete(self, request, *args, **kwargs):
+        if request.user.role != 'hr':
+            return Response({"error": "You can't Delete job. You are not HR"}, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            job_count = Job.objects.count()
+
+            if job_count == 0:
+                return Response({"message": "No jobs to delete."}, status=status.HTTP_204_NO_CONTENT)
+            Job.objects.all().delete()
+            return Response({"message": "All jobs deleted successfully."}, status=status.HTTP_200_OK)       
+        except Exception as error:
+            return Response({"error": "Failed to Delete All Jobs"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR) 
+
+
+
+
 
 class JobViewSet(viewsets.ModelViewSet):
     serializer_class = JobSerializer

@@ -17,7 +17,8 @@ export default function useNotificationWebSocket(onMessage) {
     ws.current.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        onMessage(data);
+        console.log("Hi i am websocket data:", data)
+        onMessage(data.content);
       } catch (e) {
         console.error("Invalid WS message:", event.data);
       }

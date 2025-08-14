@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { FaBell } from "react-icons/fa";
 import { FiBriefcase, FiCheckCircle } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import useNotificationSound from "../../hooks/useNotificationSound";
 import useNotificationWebSocket from "../../hooks/useNotificationWebSocket";
 import usePushNotifications from "../../hooks/usePushNotifications";
 
@@ -10,23 +9,24 @@ export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const dropdownRef = useRef();
   const navigate = useNavigate();
 
   usePushNotifications();
-  useNotificationSound();
+
   useEffect(() => {
     const cached = JSON.parse(localStorage.getItem("notifications") || "[]");
+    console.log("Cached notifications:", cached);
     setNotifications(cached);
     setUnreadCount(cached.length);
   }, []);
+
   const handleIncoming = useCallback((data) => {
     setNotifications((prev) => {
       if (prev.some((n) => n.job_id === data.job_id)) {
-       
         return prev;
       }
-
       const notification = {
         job_id: data.job_id,
         title: data.title,
@@ -34,7 +34,6 @@ export default function Notifications() {
         location: data.location,
         created_at: data.created_at || new Date().toISOString(),
       };
-
       const updated = [notification, ...prev];
       localStorage.setItem("notifications", JSON.stringify(updated));
       return updated;
@@ -43,31 +42,15 @@ export default function Notifications() {
     setUnreadCount((c) => c + 1);
   }, []);
 
-  // Attach websocket listener
   useNotificationWebSocket(handleIncoming);
 
-  // Listen to external events to refresh notifications if needed
-  useEffect(() => {
-    const handler = () => {
-      const cached = JSON.parse(localStorage.getItem("notifications") || "[]");
-      setNotifications(cached);
-      setUnreadCount(cached.length);
-    };
-    window.addEventListener("notifications-updated", handler);
-    return () => window.removeEventListener("notifications-updated", handler);
+  const handleClearAll = useCallback(() => {
+    localStorage.removeItem("notifications");
+    setNotifications([]);
+    setUnreadCount(0);
+    setDropdownOpen(false);
   }, []);
 
-  // Ask for browser notification permission once on mount
-  useEffect(() => {
-    if (
-      Notification.permission !== "granted" &&
-      Notification.permission !== "denied"
-    ) {
-      Notification.requestPermission();
-    }
-  }, []);
-
-  // Close dropdown if click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -81,15 +64,15 @@ export default function Notifications() {
   const handleJobClick = (jobId) => {
     navigate(`/job-details/${jobId}`);
     setDropdownOpen(false);
-    setUnreadCount(0); // Mark read on click
   };
 
   const role = localStorage.getItem("userRole");
-  if (role !== "student") return null;
+  if (role !== "student") {
+    return null;
+  }
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Bell Icon */}
       <div
         onClick={() => {
           setUnreadCount(0);
@@ -105,7 +88,6 @@ export default function Notifications() {
         )}
       </div>
 
-      {/* Dropdown */}
       <div
         className={`absolute right-0 mt-2 w-80 sm:w-96 bg-white shadow-xl rounded-lg border border-gray-200 overflow-hidden z-50 transition-all duration-200 ease-out transform ${
           dropdownOpen
@@ -115,14 +97,22 @@ export default function Notifications() {
       >
         <div className="flex items-center justify-between p-4 border-b bg-gray-50">
           <h3 className="font-semibold text-gray-800">Notifications</h3>
+          {notifications.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              className="text-sm text-indigo-600 hover:underline font-semibold focus:outline-none"
+            >
+              Clear All
+            </button>
+          )}
         </div>
 
         <div className="max-h-96 overflow-y-auto">
-          {dropdownOpen && notifications.length > 0 ? (
+          {notifications.length > 0 ? (
             <ul>
-              {notifications.map((job, index) => (
+              {notifications.map((job) => (
                 <li
-                  key={index}
+                  key={job.job_id}
                   onClick={() => handleJobClick(job.job_id)}
                   className="flex items-start gap-4 p-4 hover:bg-indigo-50 cursor-pointer transition-colors duration-150 border-t border-gray-100 first:border-t-0"
                 >

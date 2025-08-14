@@ -45,7 +45,7 @@ export const DashboardNav = () => {
       action: () => navigate("/events"),
     },
     {
-      title: "Live Sessions",
+      title: "Mock Interviews",
       icon: FiPlayCircle,
       color: "bg-red-500 hover:bg-red-600",
       action: () => navigate("/live-sessions"),
