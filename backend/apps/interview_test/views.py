@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.core.cache import cache
-from apps.interview_test.models.aptitude_test_result import AptitudeTestResult
+from apps.interview_test.models.aptitude_test_result_model import AptitudeTestResult
 from apps.interview_test.models.test_aptitude_models import Question
 from django.utils import timezone
 from rest_framework import status

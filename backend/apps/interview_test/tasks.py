@@ -1,5 +1,5 @@
 from celery import shared_task
-from apps.interview_test.models.aptitude_test_result import AptitudeTestResult
+from backend.apps.interview_test.models.aptitude_test_result_model import AptitudeTestResult
 from django.core.cache import cache
 from apps.interview_test.models.test_aptitude_models import Question
 

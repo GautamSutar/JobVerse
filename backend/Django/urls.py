@@ -20,5 +20,5 @@ urlpatterns = [
     path('api/', include('apps.audioapp.urls')),
     path('api/interview/', include('apps.interviewSchedule.urls')),
     path('api/notifications/', include('apps.notifications.urls')),
-    path('api/aptitude-test/', include('apps.interview_test.urls'))
+    path('api/start-test/', include('apps.interview_test.urls'))
 ]
