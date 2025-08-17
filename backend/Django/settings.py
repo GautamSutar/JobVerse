@@ -15,7 +15,7 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+AUTH_USER_MODEL = 'users.CustomUser'
 
 VAPID_PUBLIC_KEY = config("VAPID_PUBLIC_KEY")
 VAPID_PRIVATE_KEY = config("VAPID_PRIVATE_KEY")
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'corsheaders',
     'apps.resume_parsing',
     'rest_framework',
@@ -59,8 +60,8 @@ INSTALLED_APPS = [
     'apps.jobs.apps.JobsConfig',
     "apps.audioapp.apps.AudioappConfig",
     "apps.interviewSchedule.apps.InterviewscheduleConfig",
-    'channels',
     'apps.notifications.apps.NotificationsConfig',
+    'apps.interview_test.apps.InterviewTestConfig',
 ]
 
 #  Middleware

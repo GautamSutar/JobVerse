@@ -1,3 +1,27 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.core.cache import cache
+from apps.interview_test.models.aptitude_test_result import AptitudeTestResult
+from apps.interview_test.models.test_aptitude_models import Question
+from django.utils import timezone
+from rest_framework import status
+class StartAptitudeTestView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        student = request.user
 
-# Create your views here.
+        test_result = AptitudeTestResult.objects.create(student=student)
+        question_ids = list(Question.objects.values_list('id', flat=True))  
+        session_data = {
+            'student_id': student.id,
+            'question_ids': question_ids,
+            'violations': 0,
+            'start_time': timezone.now().isoformat(),
+        }
+
+        cache.set(f'test_session:{test_result.session_id}', session_data, timeout=3600)
+        return Response(
+            {'session_id': test_result.session_id},
+            status=status.HTTP_201_CREATED
+        )  
