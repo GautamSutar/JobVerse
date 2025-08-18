@@ -1,0 +1,11 @@
+Hi {{ user.username }},
+
+Thank you for completing the mock aptitude practice test.
+
+Here are your results:
+Final Score: {{ score|floatformat:2 }}%
+
+We will be in touch with the next steps if you have met the required threshold.
+
+Best regards,
+The Job Verse Team

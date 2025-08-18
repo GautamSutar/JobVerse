@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Aptitude Test Results</title>
+</head>
+<body>
+    <h2>Hi {{ user.username }},</h2>
+    <p>Thank you for completing the aptitude test on our platform.</p>
+    <p>We have processed your results. Here is your final score:</p>
+    
+    <div style="font-size: 24px; font-weight: bold; color: #4A90E2; margin: 20px 0;">
+        {{ score|floatformat:2 }}%
+    </div>
+    
+    <p>We will be in touch with the next steps if you have met the required threshold.</p>
+    <br>
+    <p>Best regards,</p>
+    <p><strong>The Hiring Team</strong></p>
+</body>
+</html>
