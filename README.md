@@ -64,7 +64,14 @@ pip install djangorestframework-simplejwt
 3) python manage.py migrate - Apply database migrations  
 4) daphne Django.asgi:application --port 8001 ( Run server to connect websocket )
 
-
+Redis Setup
+5) https://github.com/MicrosoftArchive/redis/releases
+6) doubled click on downloaded file
+7) redis-cli --version
+8) redis-cli -h redis-18784.crce182.ap-south-1-1.ec2.redns.redis-cloud.com -p 18784 -a IZDoNgvyxN3LLwUF0f6qZ2PZjWjbKm4O 
+9) redis-18784.crce182.ap-south-1-1.ec2.redns.redis-cloud.com:18784> (You will get this, it means you are in redis cli then write - )
+10) then write - PING
+11) then you will get PONG
 ---
 
 ## 🌐 CORS Setup

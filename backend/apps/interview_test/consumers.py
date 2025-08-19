@@ -5,6 +5,7 @@ from django.core.cache import cache
 from asgiref.sync import sync_to_async
 from apps.interview_test.tasks import grade_answer, log_unanswered_question
 from apps.interview_test.models.test_aptitude_models import Question, Category
+from apps.interview_test.tasks import finalize_test_result
 class AptitudeTestConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
       super().__init__(*args, **kwargs)
@@ -78,4 +79,10 @@ class AptitudeTestConsumer(AsyncWebsocketConsumer):
           'type': 'test_finished',
           'reason': reason,
        }))
-    finalize_test_results.delay()
+       finalize_test_result.delay(self.session_id)
+       if self.test_loop_task and not self.test_loop_task.done():
+          self.test_loop_task.cancel()
+       if self.total_timer_task and not self.total_timer_task.done():
+          self.total_timer_task.cancel()
+       await self.close()
+       

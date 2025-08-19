@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 
 
+
 from apps.interview_test.models.aptitude_test_result_model import AptitudeTestResult
 from apps.interview_test.models.test_aptitude_models import Question
 
@@ -83,8 +84,21 @@ def finalize_test_result(session_id):
         results_data = result_obj.results
         if not results_data:
             final_score = 0
-        
+        else:
+            correct_answers = 0
+            for question_result in results_data.value():
+                if question_result.get('correct') is True:
+                    correct_answers += 1
+                total_questions = len(results_data)
+                final_score = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
 
+        result_obj.final_score = final_score
+        result_obj.status = 'completed'
+        result_obj.completed_at = timezone.now()
+        result_obj.save()
+        send_result_email(result_obj.student.id, final_score)
+        print(f"Finalized test for {session_id}. Final Score: {final_score:.2f}%. Email task queued.")
+        return f"Finalized test for {session_id}. Final Score: {final_score:.2f}%"
     except AptitudeTestResult.DoesNotExist:
         print(f"Error: Could not find AptitudeTestResult for session {session_id} to finalize.")
         return f"Error: Could not find result for session {session_id}"
