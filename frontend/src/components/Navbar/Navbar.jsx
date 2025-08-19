@@ -30,6 +30,7 @@ export default function Navbar() {
     role: localStorage.getItem("userRole"),
     firstName: localStorage.getItem("first_name"),
   });
+  const refreshToken = localStorage.getItem("refreshToken");
 
   // This effect listens for storage changes to update the navbar in real-time
   useEffect(() => {
@@ -62,13 +63,43 @@ export default function Navbar() {
         { refreshToken: localStorage.getItem("refreshToken") },
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
+
+      toast.success("You have been successfully logged out!", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (err) {
+      console.log("Logout token:", auth.token);
+      console.log("Logout refreshToken:", {
+        refreshToken: localStorage.getItem("refreshToken"),
+      });
       console.error(
         "Logout failed, but proceeding with client-side cleanup:",
         err
       );
+
+      toast.error(
+        err.response?.data?.error ||
+          err.message ||
+          "An unknown error occurred during logout.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        }
+      );
     } finally {
-      // Clear all user-related data
       Object.keys(localStorage).forEach((key) => {
         if (
           key.startsWith("student") ||
@@ -85,7 +116,7 @@ export default function Navbar() {
           localStorage.removeItem(key);
         }
       });
-      // Force an update to the auth state and navigate
+
       window.dispatchEvent(new Event("authChange"));
       navigate("/login");
     }

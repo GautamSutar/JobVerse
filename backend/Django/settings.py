@@ -5,7 +5,7 @@ from pathlib import Path
 from decouple import config
 from dotenv import load_dotenv
 from datetime import timedelta
-
+load_dotenv()
 
 
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
@@ -20,9 +20,16 @@ AUTH_USER_MODEL = 'users.CustomUser'
 VAPID_PUBLIC_KEY = config("VAPID_PUBLIC_KEY")
 VAPID_PRIVATE_KEY = config("VAPID_PRIVATE_KEY")
 VAPID_ADMIN_EMAIL = config("VAPID_ADMIN_EMAIL", default="exoic.jobverse.in@gmail.com")
+
+CELERY_BROKER_URL = os.getenv('REDIS_URL')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
   
 
-load_dotenv()  # Load environment variables from .env file
+
 # Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 

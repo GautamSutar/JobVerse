@@ -72,7 +72,11 @@ Redis Setup
 9) redis-18784.crce182.ap-south-1-1.ec2.redns.redis-cloud.com:18784> (You will get this, it means you are in redis cli then write - )
 10) then write - PING
 11) then you will get PONG
----
+
+
+-------------To Run the Celery Server
+1) celery -A Django worker -l info
+
 
 ## 🌐 CORS Setup
 

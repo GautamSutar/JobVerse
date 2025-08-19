@@ -48,11 +48,11 @@ export default function LoginForm() {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(`${API_URL}/auth/login/`, data);
-      const { accessToken, role, refreshtoken, email, first_name, last_name } =
+      const { accessToken, role, refreshToken, email, first_name, last_name } =
         response.data;
 
       localStorage.setItem("authToken", accessToken);
-      localStorage.setItem("refreshToken", refreshtoken);
+      localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("userRole", role);
       localStorage.setItem("userEmail", email);
       // Corrected keys to match your signup form for consistency
