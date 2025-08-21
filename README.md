@@ -82,7 +82,7 @@ pip install djangorestframework-simplejwt
 
 
 ----------------------WebSocket-----------------------
-ws://127.0.0.1:8001/ws/test/<paste_your_new_session_id_here>/
+ws://127.0.0.1:8001/ws/test/a82de10f-6c79-4dc4-aa59-c0fa0f2b73be/
 
 ## 🌐 CORS Setup
 
