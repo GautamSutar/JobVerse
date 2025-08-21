@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
+// Helper component for icons to make the UI cleaner
+const InfoPill = ({ icon, text }) => (
+  <div className="flex items-center gap-2 bg-indigo-50 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">
+    {icon}
+    <span>{text}</span>
+  </div>
+);
+
 const ExploreJobsPage = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,6 +18,8 @@ const ExploreJobsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [appliedJobIds, setAppliedJobIds] = useState(new Set());
   const [submitting, setSubmitting] = useState(false);
+  // New state to manage which job cards are expanded
+  const [expandedJobs, setExpandedJobs] = useState(new Set());
 
   const token = localStorage.getItem("authToken");
   const email = localStorage.getItem("userEmail");
@@ -23,13 +33,11 @@ const ExploreJobsPage = () => {
         return;
       }
 
-      // Load applied job IDs from localStorage
       const cachedAppliedJobs = localStorage.getItem(appliedJobsCacheKey);
       if (cachedAppliedJobs) {
         setAppliedJobIds(new Set(JSON.parse(cachedAppliedJobs)));
       }
 
-      // Clean cache for previous users
       Object.keys(localStorage).forEach((key) => {
         if (key.startsWith("studentJobs_") && key !== cacheKey) {
           localStorage.removeItem(key);
@@ -43,7 +51,8 @@ const ExploreJobsPage = () => {
       if (cached) {
         try {
           parsed = JSON.parse(cached);
-          isExpired = Date.now() - parsed.timestamp > 10 * 60 * 1000; // 10 minutes
+          // UPDATED: Cache now expires after 3 minutes for faster updates
+          isExpired = Date.now() - parsed.timestamp > 3 * 60 * 1000;
           if (parsed.email !== email) {
             localStorage.removeItem(cacheKey);
             parsed = null;
@@ -61,12 +70,11 @@ const ExploreJobsPage = () => {
           const res = await axios.get(
             "http://127.0.0.1:8000/api/job/list-all-jobs-for-student/",
             {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+              headers: { Authorization: `Bearer ${token}` },
             }
           );
           setJobs(res.data);
+          // Refresh the cache with the new API response
           localStorage.setItem(
             cacheKey,
             JSON.stringify({
@@ -87,6 +95,16 @@ const ExploreJobsPage = () => {
     fetchJobs();
   }, [email, cacheKey, token, appliedJobsCacheKey]);
 
+  const toggleJobDetails = (jobId) => {
+    const newSet = new Set(expandedJobs);
+    if (newSet.has(jobId)) {
+      newSet.delete(jobId);
+    } else {
+      newSet.add(jobId);
+    }
+    setExpandedJobs(newSet);
+  };
+
   const handleApplyClick = (jobId) => {
     setSelectedJobId(jobId);
     setShowModal(true);
@@ -97,8 +115,8 @@ const ExploreJobsPage = () => {
       Swal.fire("Validation Error", "Please select a resume file.", "warning");
       return;
     }
-
     if (!selectedJobId) return;
+
     setSubmitting(true);
     const formData = new FormData();
     formData.append("resume_file", resumeFile);
@@ -142,7 +160,7 @@ const ExploreJobsPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen mt-24 bg-gray-50">
+    <div className="flex min-h-screen mt-20 bg-gray-50">
       {/* Sidebar Filters */}
       <aside className="w-full md:w-1/4 bg-white p-6 border-r hidden md:block">
         <h2 className="text-xl font-bold mb-6 text-gray-800">🔍 Filters</h2>
@@ -253,23 +271,21 @@ const ExploreJobsPage = () => {
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="bg-white shadow-lg rounded-xl p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+                className="bg-white shadow-lg rounded-xl p-6 transition-all duration-300 hover:shadow-2xl"
               >
+                {/* --- JOB CARD HEADER --- */}
                 <div className="flex flex-col sm:flex-row justify-between items-start">
                   <div className="flex-grow">
-                    <h3 className="text-2xl font-semibold text-gray-900">
+                    <h3 className="text-2xl font-bold text-gray-900">
                       {job.title}
                     </h3>
-                    <p className="text-indigo-600 font-medium text-sm mb-3">
-                      {job.domain}
+                    <p className="text-indigo-600 font-semibold text-base mb-3">
+                      {job.company_name}
                     </p>
-                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                      {job.description}
-                    </p>
-                    <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-700">
-                      <p>📅 Start: {job.start_date}</p>
-                      <p>⏰ End: {job.end_date}</p>
-                      <p>🛠 Skills: {job.skills_required}</p>
+                    <div className="flex flex-wrap gap-4 text-base text-gray-700 mb-4">
+                      <InfoPill icon="📍" text={job.location} />
+                      <InfoPill icon="💰" text={job.salary_or_stipend} />
+                      <InfoPill icon="⏳" text={job.duration} />
                     </div>
                   </div>
                   <div className="mt-4 sm:mt-0 sm:ml-6 flex-shrink-0">
@@ -285,6 +301,55 @@ const ExploreJobsPage = () => {
                       {appliedJobIds.has(job.id) ? "Applied" : "Apply Now"}
                     </button>
                   </div>
+                </div>
+
+                {/* --- JOB DETAILS (EXPANDABLE) --- */}
+                <div className="mt-6 border-t pt-4">
+                  {expandedJobs.has(job.id) ? (
+                    <div className="space-y-4 text-gray-700">
+                      <div>
+                        <h4 className="font-semibold text-lg text-gray-800 mb-1">
+                          Job Description
+                        </h4>
+                        <p>{job.description}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-lg text-gray-800 mb-1">
+                          Responsibilities
+                        </h4>
+                        <p>{job.responsibilities}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-lg text-gray-800 mb-1">
+                          Skills Required
+                        </h4>
+                        <p className="text-indigo-700">{job.skills_required}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-lg text-gray-800 mb-1">
+                          Who Can Apply
+                        </h4>
+                        <p>{job.who_can_apply}</p>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-lg text-gray-800 mb-1">
+                          Perks
+                        </h4>
+                        <p>{job.perks}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-600 line-clamp-2">
+                      {job.description}
+                    </p>
+                  )}
+
+                  <button
+                    onClick={() => toggleJobDetails(job.id)}
+                    className="text-indigo-600 hover:text-indigo-800 font-semibold mt-4"
+                  >
+                    {expandedJobs.has(job.id) ? "Show Less" : "Show More"}
+                  </button>
                 </div>
               </div>
             ))}

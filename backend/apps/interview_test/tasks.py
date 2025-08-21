@@ -76,7 +76,7 @@ def send_result_email(user_id, score):
         return f"User with ID {user_id} not found."
     
 @shared_task
-def finalize_test_result(session_id):
+def finalize_test_results(session_id):
     try:
         result_obj = AptitudeTestResult.objects.get(session_id=session_id)
         if result_obj.status == 'completed':

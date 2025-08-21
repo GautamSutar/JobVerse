@@ -10,25 +10,25 @@ import {
 
 export default function Footer() {
   return (
-    // Main container with white background and dark text
-    <footer className="bg-white text-gray-800 border-t border-gray-200">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+    // Main container with a soft, light gray background
+    <footer className="bg-slate-50 text-gray-800 border-t border-gray-200">
+      <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Column 1: Brand & Mission */}
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
-            <h2 className="text-2xl font-bold text-gray-900 mb-3">
-              <span className="text-indigo-600">Skill</span>Check
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              <span className="text-purple-600">Job</span>Verse
             </h2>
-            <p className="text-gray-600 text-sm max-w-xs">
+            <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
               An AI-powered interview platform designed to enhance hiring
               processes and empower skill-building for the next generation of
               professionals.
             </p>
-            <div className="flex space-x-4 mt-6">
-              <SocialLink href="#" icon={<FiFacebook />} />
-              <SocialLink href="#" icon={<FiTwitter />} />
-              <SocialLink href="#" icon={<FiInstagram />} />
-              <SocialLink href="#" icon={<FiLinkedin />} />
+            <div className="flex space-x-4 mt-8">
+              <SocialLink href="#" icon={<FiFacebook size={18} />} />
+              <SocialLink href="#" icon={<FiTwitter size={18} />} />
+              <SocialLink href="#" icon={<FiInstagram size={18} />} />
+              <SocialLink href="#" icon={<FiLinkedin size={18} />} />
             </div>
           </div>
 
@@ -59,19 +59,19 @@ export default function Footer() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Stay Updated
             </h2>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-gray-600 text-sm mb-5">
               Get the latest news, updates, and feature releases straight to
               your inbox.
             </p>
-            <form className="flex items-center">
+            <form className="flex items-center shadow-sm rounded-lg">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-2.5 bg-gray-100 text-gray-800 border border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-3 bg-white text-gray-800 border-t border-b border-l border-gray-200 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <button
                 type="submit"
-                className="bg-indigo-600 text-white p-3 rounded-r-lg hover:bg-indigo-700 transition-colors"
+                className="bg-purple-600 text-white p-4 rounded-r-lg hover:bg-purple-700 transition-colors duration-300"
                 aria-label="Subscribe"
               >
                 <FiArrowRight size={20} />
@@ -81,9 +81,9 @@ export default function Footer() {
         </div>
 
         {/* Footer Bottom */}
-        <div className="mt-16 border-t border-gray-200 pt-8 text-center">
+        <div className="mt-20 border-t border-gray-200 pt-8 text-center">
           <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} SkillCheck. All Rights Reserved.
+            © {new Date().getFullYear()} JobVerse. All Rights Reserved.
           </p>
         </div>
       </div>
@@ -94,13 +94,13 @@ export default function Footer() {
 // Reusable component for the link columns
 const FooterLinks = ({ title, links }) => (
   <div>
-    <h2 className="text-lg font-semibold text-gray-900 mb-4">{title}</h2>
+    <h2 className="text-lg font-semibold text-gray-900 mb-5">{title}</h2>
     <ul className="space-y-3">
       {links.map((link) => (
         <li key={link.text}>
           <Link
             to={link.href}
-            className="text-gray-600 hover:text-indigo-600 hover:pl-1 transition-all duration-300"
+            className="text-gray-600 hover:text-purple-600 hover:pl-1.5 transition-all duration-300"
           >
             {link.text}
           </Link>
@@ -116,7 +116,7 @@ const SocialLink = ({ href, icon }) => (
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="text-gray-500 bg-gray-100 p-2 rounded-full hover:bg-indigo-600 hover:text-white transition-all duration-300"
+    className="text-gray-500 bg-white p-3 rounded-full shadow-sm border border-gray-200 hover:bg-purple-600 hover:text-white hover:border-purple-600 transition-all duration-300"
   >
     {icon}
   </a>

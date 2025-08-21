@@ -9,8 +9,8 @@ from rest_framework import status
 class StartAptitudeTestView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
+        print(f"DEBUG: Using cache backend: {cache.__class__.__module__}.{cache.__class__.__name__}")
         student = request.user
-
         test_result = AptitudeTestResult.objects.create(student=student)
         question_ids = list(Question.objects.values_list('id', flat=True))  
         session_data = {
@@ -19,8 +19,11 @@ class StartAptitudeTestView(APIView):
             'violations': 0,
             'start_time': timezone.now().isoformat(),
         }
+        print("session_data",session_data)
 
-        cache.set(f'test_session:{test_result.session_id}', session_data, timeout=3600)
+        cache_key = f'test_session:{test_result.session_id}'
+        cache.set(cache_key, session_data, timeout=3600)
+        print(f"DEBUG: Set data for cache key: {cache_key}")
         return Response(
             {'session_id': test_result.session_id},
             status=status.HTTP_201_CREATED

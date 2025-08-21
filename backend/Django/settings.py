@@ -8,6 +8,8 @@ from datetime import timedelta
 load_dotenv()
 
 
+REDIS_URL = os.getenv("REDIS_URL", "redis://default:IZDoNgvyxN3LLwUF0f6qZ2PZjWjbKm4O@redis-18784.crce182.ap-south-1-1.ec2.redns.redis-cloud.com:18784")  
+BASE_DIR = Path(__file__).resolve().parent.parent
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
@@ -21,19 +23,17 @@ VAPID_PUBLIC_KEY = config("VAPID_PUBLIC_KEY")
 VAPID_PRIVATE_KEY = config("VAPID_PRIVATE_KEY")
 VAPID_ADMIN_EMAIL = config("VAPID_ADMIN_EMAIL", default="exoic.jobverse.in@gmail.com")
 
-CELERY_BROKER_URL = os.getenv('REDIS_URL')
-CELERY_RESULT_BACKEND = os.getenv('REDIS_URL')
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-  
 
 
 # Base directory of the project
-BASE_DIR = Path(__file__).resolve().parent.parent
 
-#  Load Firebase credentials
+# Load Firebase credentials
 # cred_path = BASE_DIR / "firebase-adminsdk.json"
 # if not cred_path.exists():
 #     raise FileNotFoundError(f"Firebase credentials file not found: {cred_path}")
@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',  
     'rest_framework_simplejwt',
+    'django_redis',
     'apps.users.apps.UsersConfig',
     'apps.students.apps.StudentsConfig',
     'apps.hr.apps.HrConfig',
@@ -163,12 +164,11 @@ DATABASES = {
     }
 }
 
-REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379")
 
-CAHCHES = {
-    'default':{
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': REDIS_URL,
+CACHES = {
+    'default': {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SOCKET_CONNECT_TIMEOUT": 5,  
@@ -176,6 +176,7 @@ CAHCHES = {
         },
     }
 }
+
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
 CHANNEL_LAYERS = {

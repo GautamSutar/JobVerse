@@ -27,7 +27,7 @@ class ScheduleInterviewAPIView(APIView):
         student = application.student
         hr_profile = hr_user.hr_profile
         company_name = hr_profile.company_name if hr_profile else 'Our Company'
-        dummy_link = f"https://ai.jobverse.com/session/{application.id}/{student.id}"
+        dummy_link = f"https://ai-interview-advance-o1xc.vercel.app/"
         interview_instance = serializer.save(interview_link=dummy_link)
 
         send_interview_schedule_email(

@@ -24,8 +24,7 @@ To accept all incoming changes and resolve the commit at once:
 ## 🚀 Django Start
 
 1) cd backend
-2) python -m venv venv313 (Create virtual environment for specific Python version)
-3) source venv313/Scripts/activate (Activate the virtual environment every time)
+3) source venv312/Scripts/activate 
 4) pip install django
 5) django-admin --version
 6) pip install firebase-admin
@@ -64,7 +63,7 @@ pip install djangorestframework-simplejwt
 3) python manage.py migrate - Apply database migrations  
 4) daphne Django.asgi:application --port 8001 ( Run server to connect websocket )
 
-Redis Setup
+--------------------Redis Setup---------------------
 5) https://github.com/MicrosoftArchive/redis/releases
 6) doubled click on downloaded file
 7) redis-cli --version
@@ -74,9 +73,16 @@ Redis Setup
 11) then you will get PONG
 
 
--------------To Run the Celery Server
+-------------To Run the Celery Server-----------------
 1) celery -A Django worker -l info
 
+
+-------------------add_questions---------------------
+1) python manage.py add_questions
+
+
+----------------------WebSocket-----------------------
+ws://127.0.0.1:8001/ws/test/<paste_your_new_session_id_here>/
 
 ## 🌐 CORS Setup
 
