@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import ApplicantDossier from "./ApplicantDossier";
 import ScheduleInterviewModal from "./ScheduleInterviewModal";
+import axiosInstance from "../../api/axiosInstance";
+
 import {
   FiArrowLeft,
   FiLoader,
@@ -38,12 +40,13 @@ const ApplicantsDetailPage = () => {
       }
 
       try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
-          }/job/${jobId}/applicants/`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // const response = await axios.get(
+        //   `${
+        //     import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        //   }/job/${jobId}/applicants/`,
+        //   { headers: { Authorization: `Bearer ${token}` } }
+        // );
+        const response = await axiosInstance.get(`job/${jobId}/applicants/`);
         Object.keys(localStorage).forEach((key) => {
           if (key.startsWith("applicants_for_job_")) {
             localStorage.removeItem(key);

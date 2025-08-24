@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FiX, FiClock, FiLoader } from "react-icons/fi";
-
+import axiosInstance from "../../api/axiosInstance";
+import { useAuthStore } from "../../store/authStore";
 const ScheduleInterviewModal = ({
   isOpen,
   onClose,
@@ -11,7 +12,7 @@ const ScheduleInterviewModal = ({
 }) => {
   const [scheduledTime, setScheduledTime] = useState("");
   const [loading, setLoading] = useState(false);
-  const token = localStorage.getItem("authToken");
+  const token = useAuthStore.getState().accessToken;
 
   if (!isOpen) return null;
 
@@ -34,14 +35,17 @@ const ScheduleInterviewModal = ({
     // This log will now show you the correct, complete payload before it's sent.
     console.log("SENDING CORRECTED PAYLOAD:", payload);
     try {
-      const response = await axios.post(
-        `${
-          import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
-        }/interview/schedule-interview/`,
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const response = await axiosInstance.post(
+        "interview/schedule-interview/",
+        payload
       );
-
+      // const response = await axios.post(
+      //   `${
+      //     import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+      //   }/interview/schedule-interview/`,
+      //   payload,
+      //   { headers: { Authorization: `Bearer ${token}` } }
+      // );
       Swal.fire({
         icon: "success",
         title: "Interview Scheduled!",

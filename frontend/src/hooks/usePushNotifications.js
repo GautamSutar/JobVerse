@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import axios from "axios";
-
+import axiosInstance from "../api/axiosInstance";
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_REACT_APP_VAPID_PUBLIC_KEY;
-const BACKEND_BASEURL =
-  import.meta.env.VITE_REACT_APP_BACKEND_BASEURL || "http://127.0.0.1:8000/api";
+
+// const BACKEND_BASEURL =
+//   import.meta.env.VITE_REACT_APP_BACKEND_BASEURL || "http://127.0.0.1:8000/api";
 
 function urlBase64ToUint8Array(base64String) {
   if (!base64String) {
@@ -45,24 +46,28 @@ export default function usePushNotifications() {
           });
         }
 
-        const token = localStorage.getItem("authToken");
+        // const token = localStorage.getItem("authToken");
         if (!token) {
           console.log("User is not logged in. Aborting subscription save.");
           return;
         }
 
-        const response = await axios.post(
-          `${BACKEND_BASEURL}/notifications/save-subscription/`,
+        // const response = await axios.post(
+        //   `${BACKEND_BASEURL}/notifications/save-subscription/`,
+        //   subscription,
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${token}`,
+        //     },
+        //   }
+        // );
+
+        const response = await axiosInstance(
+          '/notifications/save-subscription/',
           subscription,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
         );
         console.log("push Subscription:", response.data);
       } catch (err) {
-        console.error("Failing Backend Base URL:", BACKEND_BASEURL);
         console.error("Push subscribe failed:", err);
       }
     };

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
+import axiosInstance from "../../api/axiosInstance";
+import { useAuthStore } from "../../store/authStore";
+import { FiLoader } from "react-icons/fi"; // Added this import for the new loader
 
 const ProfileCompletion = ({ onSubmit }) => {
-  const token = localStorage.getItem("authToken");
-  const email = localStorage.getItem("userEmail");
+  const token = useAuthStore.getState().accessToken;
+  const email = useAuthStore.getState().email;
   const cacheKey = email ? `hrProfile_${email}` : null;
 
   const [formData, setFormData] = useState({
@@ -24,6 +26,7 @@ const ProfileCompletion = ({ onSubmit }) => {
     const fetchProfile = async () => {
       if (!cacheKey || !token) return;
 
+      // Clear old caches from other accounts
       Object.keys(localStorage).forEach((key) => {
         if (key.startsWith("hrProfile_") && key !== cacheKey) {
           localStorage.removeItem(key);
@@ -44,12 +47,8 @@ const ProfileCompletion = ({ onSubmit }) => {
       }
 
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/hr/hr-profiles/`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axiosInstance.get("hr/hr-profiles/");
+        console.log("Fetched HR profile");
 
         const dataToStore = {
           data: res.data,
@@ -73,30 +72,35 @@ const ProfileCompletion = ({ onSubmit }) => {
     e.preventDefault();
     try {
       const formDataToSend = new FormData();
+
+      // Append only changed/non-empty fields
       for (let key in formData) {
         if (formData[key] !== null && formData[key] !== "") {
           formDataToSend.append(key, formData[key]);
         }
       }
 
-      const res = await axios.patch(
-        `${import.meta.env.VITE_REACT_APP_BACKEND_BASEURL}/hr/hr-profiles/`,
-        formDataToSend,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axiosInstance.patch("hr/hr-profiles/", formDataToSend, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Patch Data of HR:", res);
 
+      // ✅ Merge old data with new response (important fix)
+      const updatedData = { ...formData, ...res.data };
+
+      // Update cache with fresh data
       const newDataToCache = {
-        data: res.data,
+        data: updatedData,
         timestamp: Date.now(),
         email: email,
       };
 
       localStorage.setItem(cacheKey, JSON.stringify(newDataToCache));
+
+      // ✅ Update state so UI reflects latest saved profile
+      setFormData({ ...updatedData, logo: null });
 
       Swal.fire({
         icon: "success",
@@ -104,7 +108,7 @@ const ProfileCompletion = ({ onSubmit }) => {
         text: "Profile updated successfully",
       });
 
-      if (onSubmit) onSubmit(res.data);
+      if (onSubmit) onSubmit(updatedData);
     } catch (err) {
       console.error("Submission Error:", err);
       Swal.fire({
@@ -122,13 +126,15 @@ const ProfileCompletion = ({ onSubmit }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // --- THIS IS THE UPDATED LOADER BLOCK ---
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[60vh] bg-white">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+      <div className="flex items-center justify-center h-screen bg-slate-50">
+        <FiLoader className="animate-spin text-5xl text-indigo-600" />
       </div>
     );
   }
+  // --- END OF UPDATED BLOCK ---
 
   return (
     <form

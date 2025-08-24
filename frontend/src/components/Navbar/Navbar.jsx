@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import axiosInstance from "../../api/axiosInstance";
+import { useAuthStore } from "../../store/authStore";
+
 import {
   FiMenu,
   FiX,
@@ -16,9 +19,6 @@ import {
   FiChevronDown,
 } from "react-icons/fi";
 
-const API_BASE =
-  import.meta.env.VITE_REACT_APP_BACKEND_BASEURL || "http://127.0.0.1:8000/api";
-
 // --- Main Navbar Component ---
 export default function Navbar() {
   const navigate = useNavigate();
@@ -26,19 +26,18 @@ export default function Navbar() {
 
   // Using a state for auth details to make the component re-render on login/logout
   const [auth, setAuth] = useState({
-    token: localStorage.getItem("authToken"),
-    role: localStorage.getItem("userRole"),
-    firstName: localStorage.getItem("first_name"),
+    token: useAuthStore((state) => state.accessToken),
+    role: useAuthStore((state) => state.role),
+    firstName: useAuthStore((state) => state.first_name),
   });
-  const refreshToken = localStorage.getItem("refreshToken");
+  const refreshToken = useAuthStore((state) => state.refreshToken);
 
-  // This effect listens for storage changes to update the navbar in real-time
   useEffect(() => {
     const handleStorageChange = () => {
       setAuth({
-        token: localStorage.getItem("authToken"),
-        role: localStorage.getItem("userRole"),
-        firstName: localStorage.getItem("first_name"),
+        token: useAuthStore((state) => state.accessToken),
+        role: useAuthStore((state) => state.role),
+        firstName: useAuthStore((state) => state.first_name),
       });
     };
 
@@ -58,11 +57,9 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        `${API_BASE}/auth/logout/`,
-        { refreshToken: localStorage.getItem("refreshToken") },
-        { headers: { Authorization: `Bearer ${auth.token}` } }
-      );
+      await axiosInstance.post("auth/logout/", {
+        refreshToken: useAuthStore((state) => state.refreshToken),
+      });
 
       toast.success("You have been successfully logged out!", {
         position: "top-right",
@@ -77,7 +74,7 @@ export default function Navbar() {
     } catch (err) {
       console.log("Logout token:", auth.token);
       console.log("Logout refreshToken:", {
-        refreshToken: localStorage.getItem("refreshToken"),
+        refreshToken: useAuthStore((state) => state.refreshToken),
       });
       console.error(
         "Logout failed, but proceeding with client-side cleanup:",

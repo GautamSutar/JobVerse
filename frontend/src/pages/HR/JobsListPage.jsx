@@ -2,22 +2,25 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FiBriefcase, FiLoader } from "react-icons/fi";
 import JobCard from "./JobCard";
+import axiosInstance from "../../api/axiosInstance";
+import { useAuthStore } from "../../store/authStore";
 
 const JobsListPage = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const token = localStorage.getItem("authToken");
+  const token = useAuthStore((state)=> state.accessToken)
 
   useEffect(() => {
     const fetchAllJobs = async () => {
       try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
-          }/job/list-all-jobs/`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // const response = await axios.get(
+        //   `${
+        //     import.meta.env.VITE_REACT_APP_BACKEND_BASEURL
+        //   }/job/list-all-jobs/`,
+        //   { headers: { Authorization: `Bearer ${token}` } }
+        // );
+        const response = await axiosInstance.get("job/list-all-jobs/");
         setJobs(response.data);
       } catch (err) {
         setError("Failed to load your job postings.");

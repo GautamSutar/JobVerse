@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-
+import axiosInstance from "../../api/axiosInstance";
 // Helper component for icons to make the UI cleaner
 const InfoPill = ({ icon, text }) => (
   <div className="flex items-center gap-2 bg-indigo-50 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">

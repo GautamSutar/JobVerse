@@ -5,6 +5,9 @@ import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiMail, FiLock, FiLogIn, FiEye, FiEyeOff } from "react-icons/fi";
+import axiosInstance from "../../api/axiosInstance";
+import { useAuthStore } from "../../store/authStore";
+
 
 // A reusable InputField component to keep the form code clean
 const InputField = ({ icon, name, type, placeholder, register, error }) => {
@@ -32,6 +35,7 @@ const InputField = ({ icon, name, type, placeholder, register, error }) => {
 };
 
 export default function LoginForm() {
+  const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
   const {
     register,
@@ -41,24 +45,25 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   // --- ALL YOUR EXISTING LOGIC IS PRESERVED ---
-  const API_URL =
-    import.meta.env.VITE_REACT_APP_BACKEND_BASEURL ||
-    "http://127.0.0.1:8000/api";
+  // const API_URL =
+  //   import.meta.env.VITE_REACT_APP_BACKEND_BASEURL ||
+  //   "http://127.0.0.1:8000/api";
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/login/`, data);
+      // const response = await axios.post(`${API_URL}/auth/login/`, data);
+      const response = await axiosInstance.post("auth/login/", data);
       const { accessToken, role, refreshToken, email, first_name, last_name } =
         response.data;
-
-      localStorage.setItem("authToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      localStorage.setItem("userRole", role);
-      localStorage.setItem("userEmail", email);
+      login({ accessToken, role, refreshToken, email, first_name, last_name });
+      // localStorage.setItem("authToken", accessToken);
+      // localStorage.setItem("refreshToken", refreshToken);
+      // localStorage.setItem("userRole", role);
+      // localStorage.setItem("userEmail", email);
       // Corrected keys to match your signup form for consistency
-      localStorage.setItem("first_name", first_name);
-      localStorage.setItem("last_name", last_name);
-      console.log(accessToken)
+      // localStorage.setItem("first_name", first_name);
+      // localStorage.setItem("last_name", last_name);
+      console.log(accessToken);
       toast.success("Login successful! Redirecting...", {
         position: "top-right",
         autoClose: 2000,
