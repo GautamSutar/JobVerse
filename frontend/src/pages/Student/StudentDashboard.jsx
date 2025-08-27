@@ -18,7 +18,7 @@ import { ResumeUploadSection } from "./ResumeUploadSection";
 import { ScoresSection } from "./ScoresSection";
 import { DashboardNav } from "./DashboardNav";
 import Notifications from "./Notifications";
-import { useAuthStore } from "../../store/authStore";
+import { useAuthStore } from "../../store/authStore/authStore";
 
 // Placeholder for the JobsSection
 const JobsSection = () => (

@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import Swal from "sweetalert2";
 import { SectionCard } from "./SectionCard"; // For consistent UI
 import { FiUploadCloud } from "react-icons/fi";
-import axiosInstance from "../../api/axiosInstance";
-import { useAuthStore } from "../../store/authStore";
-
-
+import axiosInstance from "../../store/api/axiosInstance";
+import { useAuthStore } from "../../store/authStore/authStore";
 
 export const ResumeUploadSection = () => {
   const [resumeFile, setResumeFile] = useState(null);

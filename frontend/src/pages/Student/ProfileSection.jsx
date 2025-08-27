@@ -3,8 +3,8 @@ import { Dialog } from "@headlessui/react";
 import { FiUser, FiX } from "react-icons/fi";
 import Swal from "sweetalert2";
 import { SectionCard } from "./SectionCard"; // For consistent UI
-import { useAuthStore } from "../../store/authStore";
-import axiosInstance from "../../api/axiosInstance";
+import { useAuthStore } from "../../store/authStore/authStore";
+import axiosInstance from "../../store/api/axiosInstance";
 
 // const API_BASE =
 //   import.meta.env.VITE_REACT_APP_BACKEND_BASEURL || "http://127.0.0.1:8000/api";
@@ -155,7 +155,7 @@ export const ProfileSection = () => {
 
       Swal.fire("Success", "Profile updated successfully!", "success");
       const responseData = response.data;
-      const updatedProfile = { ...profileData };    
+      const updatedProfile = { ...profileData };
       if (responseData.resume) {
         updatedProfile.resume = responseData.resume;
       }

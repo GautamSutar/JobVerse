@@ -13,10 +13,10 @@ const NavButton = ({ title, icon, color, action }) => {
   return (
     <button
       onClick={action}
-      className={`flex items-center justify-center w-full p-3 rounded-xl shadow-md transition-all duration-300 transform hover:shadow-lg hover:-translate-y-1 ${color}`}
+      className={`flex items-center cursor-pointer justify-center w-full p-3 rounded-xl shadow-md transition-all duration-300 transform hover:shadow-lg hover:-translate-y-1 ${color}`}
     >
       <IconComponent className="h-5 w-5 mr-2 text-white" />
-      <span className="font-semibold text-white text-sm">{title}</span>
+      <span className="font-semibold  text-white text-sm">{title}</span>
     </button>
   );
 };
@@ -47,7 +47,7 @@ export const DashboardNav = () => {
       title: "Practice",
       icon: FiPlayCircle,
       color: "bg-red-500 hover:bg-red-600",
-      action: () => navigate("/practice-page"),
+      action: () => navigate("/aptitude"),
     },
     {
       title: "Live Interview",
@@ -59,7 +59,7 @@ export const DashboardNav = () => {
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg mb-8">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2  sm:grid-cols-3 md:grid-cols-5 gap-4">
         {navItems.map((item) => (
           <NavButton
             key={item.title}

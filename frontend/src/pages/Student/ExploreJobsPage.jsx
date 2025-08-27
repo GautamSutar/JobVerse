@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import axiosInstance from "../../api/axiosInstance";
-import { useAuthStore } from "../../store/authStore";
+import axiosInstance from "../../store/api/axiosInstance";
+import { useAuthStore } from "../../store/authStore/authStore";
 const InfoPill = ({ icon, text }) => (
   <div className="flex items-center gap-2 bg-indigo-50 text-indigo-800 text-sm font-medium px-3 py-1 rounded-full">
     {icon}
@@ -60,7 +60,7 @@ const ExploreJobsPage = () => {
         try {
           const res = await axiosInstance.get("job/list-all-jobs-for-student/");
           setJobs(res.data);
-         
+
           localStorage.setItem(
             cacheKey,
             JSON.stringify({

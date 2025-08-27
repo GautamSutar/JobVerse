@@ -22,8 +22,8 @@ import {
 } from "react-icons/fi";
 import Swal from "sweetalert2";
 import CreateJob from "./CreateJob";
-import { useAuthStore } from "../../store/authStore";
-import axiosInstance from "../../api/axiosInstance";
+import { useAuthStore } from "../../store/authStore/authStore";
+import axiosInstance from "../../store/api/axiosInstance";
 
 // Read More Component (Unchanged)
 const ReadMore = ({ text, maxLength = 250 }) => {

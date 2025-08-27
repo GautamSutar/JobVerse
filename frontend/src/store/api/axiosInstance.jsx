@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../authStore/authStore";
 import { PUBLIC_ROUTES_PATTERN } from "./publicRoute";
 const API_URL =
   import.meta.env.VITE_REACT_APP_BACKEND_BASEURL ||

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import axiosInstance from "../../api/axiosInstance";
-import { useAuthStore } from "../../store/authStore";
+import axiosInstance from "../../store/api/axiosInstance";
+import { useAuthStore } from "../../store/authStore/authStore";
 import {
   FiMenu,
   FiX,
@@ -11,7 +11,7 @@ import {
   FiStar,
   FiTool,
   FiMail,
-  FiUser, 
+  FiUser,
   FiLogOut,
   FiGrid,
   FiChevronDown,

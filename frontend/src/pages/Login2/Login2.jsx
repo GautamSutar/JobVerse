@@ -4,8 +4,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiMail, FiLock, FiLogIn, FiEye, FiEyeOff } from "react-icons/fi";
-import axiosInstance from "../../api/axiosInstance";
-import { useAuthStore } from "../../store/authStore";
+import axiosInstance from "../../store/api/axiosInstance";
+import { useAuthStore } from "../../store/authStore/authStore";
 const InputField = ({ icon, name, type, placeholder, register, error }) => {
   const Icon = icon;
   return (
@@ -43,7 +43,7 @@ export default function LoginForm() {
       // const response = await axios.post(`${API_URL}/auth/login/`, data);
       const response = await axiosInstance.post("auth/login/", data);
       const { accessToken, role, refreshToken, email, first_name, last_name } =
-      response.data;
+        response.data;
       console.log("Login Acess Token :", accessToken);
       login({
         first_name,

@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import ApplicantDossier from "./ApplicantDossier";
 import ScheduleInterviewModal from "./ScheduleInterviewModal";
-import axiosInstance from "../../api/axiosInstance";
+import axiosInstance from "../../store/api/axiosInstance";
 
 import {
   FiArrowLeft,

@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FiBriefcase, FiLoader } from "react-icons/fi";
 import JobCard from "./JobCard";
-import axiosInstance from "../../api/axiosInstance";
-import { useAuthStore } from "../../store/authStore";
+import axiosInstance from "../../store/api/axiosInstance";
+import { useAuthStore } from "../../store/authStore/authStore";
 
 const JobsListPage = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const token = useAuthStore((state)=> state.accessToken)
+  const token = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
     const fetchAllJobs = async () => {

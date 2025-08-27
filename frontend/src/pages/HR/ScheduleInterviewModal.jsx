@@ -2,8 +2,8 @@ import React, { use, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FiX, FiClock, FiLoader } from "react-icons/fi";
-import axiosInstance from "../../api/axiosInstance";
-import { useAuthStore } from "../../store/authStore";
+import axiosInstance from "../../store/api/axiosInstance";
+import { useAuthStore } from "../../store/authStore/authStore";
 const ScheduleInterviewModal = ({
   isOpen,
   onClose,

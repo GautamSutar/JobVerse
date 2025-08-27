@@ -1,4 +1,5 @@
 import ProtectedRoute from "../components/Protected/ProtectedRoute";
+import TestRoom from "../pages/Student/aptitude-interview-practice/aptitude/TestRoom";
 import ExploreJobsPage from "../pages/Student/ExploreJobsPage";
 import NotFound from "../pages/Student/NotFound";
 import StudentDashboard from "../pages/Student/StudentDashboard";
@@ -17,6 +18,14 @@ const StudentRoutes = [
     element: (
       <ProtectedRoute allowedRoles="student">
         <ExploreJobsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/aptitude",
+    element: (
+      <ProtectedRoute allowedRoles="student">
+        <TestRoom />
       </ProtectedRoute>
     ),
   },

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios";
-import axiosInstance from "../api/axiosInstance";
+import axiosInstance from "../store/api/axiosInstance";
 const VAPID_PUBLIC_KEY = import.meta.env.VITE_REACT_APP_VAPID_PUBLIC_KEY;
 
 // const BACKEND_BASEURL =
@@ -63,8 +63,8 @@ export default function usePushNotifications() {
         // );
 
         const response = await axiosInstance(
-          '/notifications/save-subscription/',
-          subscription,
+          "/notifications/save-subscription/",
+          subscription
         );
         console.log("push Subscription:", response.data);
       } catch (err) {
