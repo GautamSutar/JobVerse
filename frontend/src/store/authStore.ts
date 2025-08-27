@@ -50,7 +50,7 @@ export const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "auth-storage", // localStorage key
+      name: "auth-storage", 
       partialize: (state) =>
         Object.fromEntries(
           Object.entries(state).filter(([key]) =>

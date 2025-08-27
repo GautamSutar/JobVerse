@@ -42,7 +42,6 @@ To accept all incoming changes and resolve the commit at once:
 1) python manage.py migrate
 1) python manage.py runserver
 
-
 pip install djangorestframework
 pip install djangorestframework-simplejwt
 

@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiMail, FiLock, FiLogIn, FiEye, FiEyeOff } from "react-icons/fi";
 import axiosInstance from "../../api/axiosInstance";
 import { useAuthStore } from "../../store/authStore";
-
-
-// A reusable InputField component to keep the form code clean
 const InputField = ({ icon, name, type, placeholder, register, error }) => {
   const Icon = icon;
   return (
@@ -33,7 +29,6 @@ const InputField = ({ icon, name, type, placeholder, register, error }) => {
     </div>
   );
 };
-
 export default function LoginForm() {
   const login = useAuthStore((state) => state.login);
   const navigate = useNavigate();
@@ -43,36 +38,27 @@ export default function LoginForm() {
     formState: { errors },
   } = useForm();
   const [showPassword, setShowPassword] = useState(false);
-
-  // --- ALL YOUR EXISTING LOGIC IS PRESERVED ---
-  // const API_URL =
-  //   import.meta.env.VITE_REACT_APP_BACKEND_BASEURL ||
-  //   "http://127.0.0.1:8000/api";
-
   const onSubmit = async (data) => {
     try {
       // const response = await axios.post(`${API_URL}/auth/login/`, data);
       const response = await axiosInstance.post("auth/login/", data);
       const { accessToken, role, refreshToken, email, first_name, last_name } =
-        response.data;
-      login({ accessToken, role, refreshToken, email, first_name, last_name });
-      // localStorage.setItem("authToken", accessToken);
-      // localStorage.setItem("refreshToken", refreshToken);
-      // localStorage.setItem("userRole", role);
-      // localStorage.setItem("userEmail", email);
-      // Corrected keys to match your signup form for consistency
-      // localStorage.setItem("first_name", first_name);
-      // localStorage.setItem("last_name", last_name);
-      console.log(accessToken);
+      response.data;
+      console.log("Login Acess Token :", accessToken);
+      login({
+        first_name,
+        last_name,
+        email,
+        role,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      });
       toast.success("Login successful! Redirecting...", {
         position: "top-right",
         autoClose: 2000,
         theme: "colored",
       });
-
-      // Dispatch a custom event to notify other components (like Navbar) of the auth change
       window.dispatchEvent(new Event("authChange"));
-
       setTimeout(() => {
         if (role === "student") navigate("/student-dashboard");
         else if (role === "hr") navigate("/hr-dashboard");
@@ -89,8 +75,6 @@ export default function LoginForm() {
       console.error("Login failed:", errorMsg);
     }
   };
-
-  // --- NEW, ENHANCED UI ---
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <ToastContainer />
@@ -125,14 +109,11 @@ export default function LoginForm() {
             </div>
           </div>
         </div>
-
-        {/* Right Side - Form */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">Sign In</h2>
           <p className="text-gray-500 mb-8">
             Please enter your details to login.
           </p>
-
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <InputField
               icon={FiMail}
@@ -142,8 +123,6 @@ export default function LoginForm() {
               register={register}
               error={errors.email}
             />
-
-            {/* Password Field with Show/Hide Toggle */}
             <div>
               <div className="relative">
                 <FiLock className="absolute top-1/2 left-4 -translate-y-1/2 text-gray-400" />
@@ -173,7 +152,6 @@ export default function LoginForm() {
                 </p>
               )}
             </div>
-
             <div className="text-right">
               <a
                 href="#"
@@ -182,7 +160,6 @@ export default function LoginForm() {
                 Forgot Password?
               </a>
             </div>
-
             <div className="pt-2">
               <button
                 type="submit"

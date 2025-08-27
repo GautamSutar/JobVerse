@@ -8,7 +8,6 @@ import {
   FiMic,
 } from "react-icons/fi";
 
-// A single, reusable component for the navigation buttons
 const NavButton = ({ title, icon, color, action }) => {
   const IconComponent = icon;
   return (
@@ -45,10 +44,10 @@ export const DashboardNav = () => {
       action: () => navigate("/events"),
     },
     {
-      title: "Mock Interviews",
+      title: "Practice",
       icon: FiPlayCircle,
       color: "bg-red-500 hover:bg-red-600",
-      action: () => navigate("/live-sessions"),
+      action: () => navigate("/practice-page"),
     },
     {
       title: "Live Interview",
@@ -60,7 +59,6 @@ export const DashboardNav = () => {
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-lg mb-8">
-      {/* On mobile (sm), it's a 2-column grid. On medium screens and up (md), it's a 5-column grid. */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
         {navItems.map((item) => (
           <NavButton

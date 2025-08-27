@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use((config) => {
     relativeUrl.startsWith(route)
   );
   // ✅ Attach token only if route is NOT public
-  if (token) {
+  if (token && !isPublic) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;

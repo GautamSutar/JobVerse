@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import axiosInstance from "../../api/axiosInstance";
 import { useAuthStore } from "../../store/authStore";
-import { FiLoader } from "react-icons/fi"; // Added this import for the new loader
+import { FiLoader } from "react-icons/fi";
 
 const ProfileCompletion = ({ onSubmit }) => {
   const token = useAuthStore.getState().accessToken;
@@ -21,6 +21,7 @@ const ProfileCompletion = ({ onSubmit }) => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false); // separate state for submit button loader
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -48,16 +49,31 @@ const ProfileCompletion = ({ onSubmit }) => {
 
       try {
         const res = await axiosInstance.get("hr/hr-profiles/");
-        console.log("Fetched HR profile");
+        console.log("Fetched HR profile:", res.data);
+
+        const profile = res.data;
+
+        // 🔑 Map backend response → our form structure
+        const mappedData = {
+          mobile_number: profile.mobile_number || "",
+          gender: profile.gender || "",
+          linkedin_profile: profile.linkedin_profile || "",
+          company_name: profile.company_name || profile.company?.name || "",
+          company_email: profile.company_email || profile.company?.email || "",
+          company_location:
+            profile.company_location || profile.company?.location || "",
+          designation: profile.designation || "",
+          logo: null,
+        };
 
         const dataToStore = {
-          data: res.data,
+          data: mappedData,
           timestamp: Date.now(),
           email: email,
         };
 
         localStorage.setItem(cacheKey, JSON.stringify(dataToStore));
-        setFormData({ ...res.data, logo: null });
+        setFormData(mappedData);
       } catch (err) {
         console.error("Error fetching profile:", err);
       } finally {
@@ -70,6 +86,8 @@ const ProfileCompletion = ({ onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+
     try {
       const formDataToSend = new FormData();
 
@@ -87,10 +105,8 @@ const ProfileCompletion = ({ onSubmit }) => {
       });
       console.log("Patch Data of HR:", res);
 
-      // ✅ Merge old data with new response (important fix)
       const updatedData = { ...formData, ...res.data };
 
-      // Update cache with fresh data
       const newDataToCache = {
         data: updatedData,
         timestamp: Date.now(),
@@ -98,8 +114,6 @@ const ProfileCompletion = ({ onSubmit }) => {
       };
 
       localStorage.setItem(cacheKey, JSON.stringify(newDataToCache));
-
-      // ✅ Update state so UI reflects latest saved profile
       setFormData({ ...updatedData, logo: null });
 
       Swal.fire({
@@ -118,6 +132,8 @@ const ProfileCompletion = ({ onSubmit }) => {
           err.response?.data?.message ||
           "Something went wrong. Please try again.",
       });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -126,7 +142,7 @@ const ProfileCompletion = ({ onSubmit }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // --- THIS IS THE UPDATED LOADER BLOCK ---
+  // --- Loader for profile fetching ---
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-50">
@@ -134,7 +150,6 @@ const ProfileCompletion = ({ onSubmit }) => {
       </div>
     );
   }
-  // --- END OF UPDATED BLOCK ---
 
   return (
     <form
@@ -153,7 +168,7 @@ const ProfileCompletion = ({ onSubmit }) => {
           <input
             type="tel"
             name="mobile_number"
-            value={formData.mobile_number || ""}
+            value={formData.mobile_number}
             onChange={handleInputChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
@@ -166,7 +181,7 @@ const ProfileCompletion = ({ onSubmit }) => {
           </label>
           <select
             name="gender"
-            value={formData.gender || ""}
+            value={formData.gender}
             onChange={handleInputChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
@@ -185,7 +200,7 @@ const ProfileCompletion = ({ onSubmit }) => {
           <input
             type="url"
             name="linkedin_profile"
-            value={formData.linkedin_profile || ""}
+            value={formData.linkedin_profile}
             onChange={handleInputChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
           />
@@ -198,7 +213,7 @@ const ProfileCompletion = ({ onSubmit }) => {
           <input
             type="text"
             name="company_name"
-            value={formData.company_name || ""}
+            value={formData.company_name}
             onChange={handleInputChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
@@ -212,7 +227,7 @@ const ProfileCompletion = ({ onSubmit }) => {
           <input
             type="email"
             name="company_email"
-            value={formData.company_email || ""}
+            value={formData.company_email}
             onChange={handleInputChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
@@ -226,7 +241,7 @@ const ProfileCompletion = ({ onSubmit }) => {
           <input
             type="text"
             name="company_location"
-            value={formData.company_location || ""}
+            value={formData.company_location}
             onChange={handleInputChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
@@ -240,7 +255,7 @@ const ProfileCompletion = ({ onSubmit }) => {
           <input
             type="text"
             name="designation"
-            value={formData.designation || ""}
+            value={formData.designation}
             onChange={handleInputChange}
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-400 transition"
@@ -266,8 +281,10 @@ const ProfileCompletion = ({ onSubmit }) => {
       <div className="flex justify-end pt-6">
         <button
           type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
+          disabled={submitting}
+          className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg transition shadow-md flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
         >
+          {submitting && <FiLoader className="animate-spin" />}
           Save Profile
         </button>
       </div>

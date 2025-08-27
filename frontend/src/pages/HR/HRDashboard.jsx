@@ -267,15 +267,15 @@ const QuickActions = ({ onOpenProfileModal }) => {
   ];
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+      <h2 className="text-xl font-semibold  text-gray-800 mb-4">
         Quick Actions
       </h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4  gap-4">
         {actions.map((action) => {
           const content = (
             <>
               <action.icon className="h-6 w-6 text-indigo-600 mb-2" />
-              <span className="font-semibold text-gray-700 text-sm">
+              <span className="font-semibold text-gray-700  text-sm">
                 {action.title}
               </span>
             </>

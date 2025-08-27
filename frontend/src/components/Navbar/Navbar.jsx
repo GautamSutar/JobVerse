@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "../../api/axiosInstance";
 import { useAuthStore } from "../../store/authStore";
-
 import {
   FiMenu,
   FiX,
@@ -13,25 +11,21 @@ import {
   FiStar,
   FiTool,
   FiMail,
-  FiUser, // <-- THE MISSING ICON IS NOW ADDED HERE
+  FiUser, 
   FiLogOut,
   FiGrid,
   FiChevronDown,
 } from "react-icons/fi";
 
-// --- Main Navbar Component ---
 export default function Navbar() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-
-  // Using a state for auth details to make the component re-render on login/logout
   const [auth, setAuth] = useState({
     token: useAuthStore((state) => state.accessToken),
     role: useAuthStore((state) => state.role),
     firstName: useAuthStore((state) => state.first_name),
   });
-  const refreshToken = useAuthStore((state) => state.refreshToken);
-
+  const refreshToken = useAuthStore.getState().refreshToken;
   useEffect(() => {
     const handleStorageChange = () => {
       setAuth({
@@ -46,7 +40,6 @@ export default function Navbar() {
     };
 
     window.addEventListener("storage", handleStorageChange);
-    // Custom event to handle login/logout from within the app
     window.addEventListener("authChange", updateUserState);
 
     return () => {
@@ -125,15 +118,11 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo Section */}
           <Logo />
-
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             <NavLinks role={auth.role} />
             <div className="w-px h-6 bg-gray-200 mx-2"></div> {/* Divider */}
             <AuthButtons auth={auth} handleLogout={handleLogout} />
           </div>
-
-          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(true)}
@@ -144,8 +133,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu Overlay */}
       <MobileMenu
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -155,9 +142,6 @@ export default function Navbar() {
     </nav>
   );
 }
-
-// --- Sub-components for better organization ---
-
 const Logo = () => (
   <Link to="/" className="flex items-center space-x-3">
     <video className="w-16 h-16 rounded-lg" autoPlay muted loop playsInline>
@@ -174,7 +158,6 @@ const NavLinks = ({ role }) => {
     { title: "Home", path: "/", icon: FiHome },
     { title: "About", path: "/about", icon: FiInfo },
     { title: "Features", path: "/features", icon: FiStar },
-    { title: "Practice", path: "/practice", icon: FiTool, role: "student" },
     { title: "Contact", path: "/contact", icon: FiMail },
   ];
 
@@ -300,12 +283,6 @@ const MobileMenu = ({ isOpen, setIsOpen, auth, handleLogout }) => (
               { title: "Home", path: "/", icon: FiHome },
               { title: "About", path: "/about", icon: FiInfo },
               { title: "Features", path: "/features", icon: FiStar },
-              {
-                title: "Practice",
-                path: "/practice",
-                icon: FiTool,
-                role: "student",
-              },
               { title: "Contact", path: "/contact", icon: FiMail },
             ].map(
               (item) =>

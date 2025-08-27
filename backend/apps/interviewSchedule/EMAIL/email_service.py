@@ -1,7 +1,7 @@
 from django.core.mail import send_mail, EmailMultiAlternatives
 from django.conf import settings
 from django.template.loader import render_to_string
-
+from django.contrib.auth.hashers import make_password
 def send_application_confirmation_email(student_email, student_name, job_title):
     """Sends the universal confirmation email to any student who applies."""
     

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { SectionCard } from "./SectionCard"; // For consistent UI
 import { FiUploadCloud } from "react-icons/fi";
+import axiosInstance from "../../api/axiosInstance";
+import { useAuthStore } from "../../store/authStore";
 
-// Using a NAMED export for consistency
+
+
 export const ResumeUploadSection = () => {
   const [resumeFile, setResumeFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -31,17 +33,23 @@ export const ResumeUploadSection = () => {
 
     setUploading(true);
     try {
-      const token = localStorage.getItem("authToken");
-      await axios.patch(
-        "http://127.0.0.1:8000/api/student/student-profiles/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // const token = localStorage.getItem("authToken");
+      // await axios.patch(
+      //   "http://127.0.0.1:8000/api/student/student-profiles/",
+      //   formData,
+      //   {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //   }
+      // );
+      const token = useAuthStore.getState().accessToken;
+      await axiosInstance.patch("student/student-profiles/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       Swal.fire(
         "Success!",
         "Your resume has been uploaded successfully.",

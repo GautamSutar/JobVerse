@@ -1,5 +1,4 @@
 import React from "react";
-// Import all the necessary icons
 import {
   FiBriefcase,
   FiClipboard,
@@ -9,7 +8,6 @@ import {
   FiTarget,
 } from "react-icons/fi";
 
-// Import all the dashboard components
 import { SummaryCard } from "./SummaryCard";
 import { SectionCard } from "./SectionCard";
 import { MockInterviewChart } from "./MockInterviewCharts";
@@ -20,6 +18,7 @@ import { ResumeUploadSection } from "./ResumeUploadSection";
 import { ScoresSection } from "./ScoresSection";
 import { DashboardNav } from "./DashboardNav";
 import Notifications from "./Notifications";
+import { useAuthStore } from "../../store/authStore";
 
 // Placeholder for the JobsSection
 const JobsSection = () => (
@@ -50,8 +49,8 @@ const JobsSection = () => (
 );
 
 export default function StudentDashboard() {
-  const first_name = localStorage.getItem("first_name") || "Student";
-  const last_name = localStorage.getItem("last_name") || " 😊";
+  const first_name = useAuthStore.getState().first_name || "Student";
+  const last_name = useAuthStore.getState().last_name || " 😊";
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-20">
@@ -64,17 +63,6 @@ export default function StudentDashboard() {
             <p className="mt-1 text-md text-gray-600">
               Here's a snapshot of your job application progress.
             </p>
-          </div>
-
-          <div className="mt-4 md:mt-0">
-            <div className="flex flex-row space-x-4">
-              <div className="mt-4 md:mt-0">
-                <Notifications />
-              </div>
-              <button className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-indigo-700 transition-transform transform hover:scale-105">
-                Explore New Jobs
-              </button>
-            </div>
           </div>
         </div>
 

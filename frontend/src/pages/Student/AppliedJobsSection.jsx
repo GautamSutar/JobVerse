@@ -1,10 +1,7 @@
 import React from "react";
 import { SectionCard } from "./SectionCard"; // Assumes SectionCard is in the same folder
 import { FiBriefcase } from "react-icons/fi";
-
-// Note: I am now using a NAMED export to be consistent with the other dashboard components.
 export const AppliedJobsSection = () => {
-  // Sample data to simulate fetched jobs
   const appliedJobs = [
     {
       id: 1,
@@ -25,7 +22,6 @@ export const AppliedJobsSection = () => {
       status: "Rejected",
     },
   ];
-
   const getStatusClass = (status) => {
     switch (status) {
       case "Accepted":
@@ -36,7 +32,6 @@ export const AppliedJobsSection = () => {
         return "bg-yellow-100 text-yellow-800";
     }
   };
-
   return (
     <SectionCard title="Recently Applied Jobs" icon={FiBriefcase}>
       <div className="space-y-4">
