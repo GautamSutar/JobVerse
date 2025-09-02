@@ -1,12 +1,10 @@
-# React + Vite
+Github 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+git pull private_only ERP------------( This will bring all the commited code from branch ERP to ERP-TEST)
+-------------------------------------git fetch → downloads the latest commits from a remote without changing your local files.
+-------------------------------------git pull → does a fetch and then merges those commits into your current branch automatically.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+-------------commands------------------ 
+npx playwright test
