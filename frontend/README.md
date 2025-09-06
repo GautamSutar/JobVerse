@@ -6,5 +6,10 @@ git pull private_only ERP------------( This will bring all the commited code fro
 
 
 
--------------commands------------------ 
+-------------Playwright - commands------------------ 
 npx playwright test
+npm playwright -v
+npx playwright --help
+npx playwright { specific folder name\file name } --project chromium --headed
+npx playwright codegen  --browser firefox
+ 
