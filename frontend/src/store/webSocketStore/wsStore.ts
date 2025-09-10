@@ -24,6 +24,7 @@ export const useWSStore = create<WSStore>((set, get) => ({
     if (get().socket) {
       return;
     }
+    console.log("wsUrl:", wsUrl);
     const socket = new WebSocket(`${wsUrl}ws/test/${sessionId}/`);
     socket.onopen = () => {
       console.log("Websocket Connected");
@@ -53,12 +54,12 @@ export const useWSStore = create<WSStore>((set, get) => ({
       socket.close();
     }
   },
-  sendMessage: (lastMessage: object) => {
+  sendMessage: (message: object) => {
     const socket = get().socket;
     if (socket && socket.readyState === WebSocket.OPEN) {
       socket.send(JSON.stringify(message));
     } else {
-      console.log("Can not send message ");
+      console.log("Cannot send message, WebSocket is not open.");
     }
   },
 }));
