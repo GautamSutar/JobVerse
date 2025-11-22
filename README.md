@@ -178,15 +178,6 @@ ws://127.0.0.1:8001/ws/test/a82de10f-6c79-4dc4-aa59-c0fa0f2b73be/
 ### 📡 WebSocket Live Interaction  
 ### 🛡 Proctoring System (Tab Switch, Multiface Detection)
 
----
-
-# 👨‍💻 **Contributor**
-
-> **👑 Gautam Sutar**  
-Creator & Lead Developer of JobVerse Backend  
-Passionate about AI Systems, Real-Time Processing & Scalable Architectures
-
----
 
 # 🔗 **Social Footer**
 
