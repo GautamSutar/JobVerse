@@ -192,7 +192,4 @@ ws://127.0.0.1:8001/ws/test/a82de10f-6c79-4dc4-aa59-c0fa0f2b73be/
 ✨ Built with passion, AI, and caffeine — Welcome to the future of mock interviews. ✨
 </p>
 
-```
-
----
 
