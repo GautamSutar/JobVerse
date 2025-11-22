@@ -1,9 +1,8 @@
 # Virtual environment
+rasa_venv/
+.env
 venv/
 venv312/
-rasa_venv/
-env/
-.venv/
 
 # Python bytecode
 __pycache__/
