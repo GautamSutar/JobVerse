@@ -88,7 +88,7 @@ User → Django API → Task Queued → Redis Broker → Celery Worker → AI Pr
 
 # 🚦 **Setup Flowchart**
 
-```
+```]]
 
 Clone Repo
 ↓
@@ -110,8 +110,6 @@ Run Django + Daphne + Celery
 
 # ⚡ **ONE-SHOT CONTINUOUS SETUP SECTION**  
 *(Everything in one flow as requested)*
-
-```
 
 git clone [https://github.com/GautamSutar/JobVerse.git](https://github.com/GautamSutar/JobVerse.git)
 cd backend
@@ -170,9 +168,6 @@ daphne Django.asgi:application --port 8001
 
 ws://127.0.0.1:8001/ws/test/a82de10f-6c79-4dc4-aa59-c0fa0f2b73be/
 
-```
-
----
 
 # 🌟 **Key Features**
 
